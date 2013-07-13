@@ -1,0 +1,10 @@
+update-events:
+  - quit
+serverID: 'MyServer'
+database:
+  url: 'jdbc:mysql://localhost:3306/mydb?user=root&password=asdf'
+  handler: 'tk.manf.InventorySQL.database.handler.MySQLDatabaseHandler'
+data:
+  serializer: 'tk.manf.InventorySQL.datahandling.serializer.JSONSerializer'
+  compressor: 'tk.manf.InventorySQL.datahandling.compressor.GZipCompressor'
+enable-metrics: true

@@ -1,0 +1,7 @@
+command:
+  error: '&1Error while performing this Command!'
+inventory:
+  saving: '&1Your Inventory is saving...'
+  saved: '&4Your Inventory has been saved!'
+  synced: '&1Your Inventory has successfully been synchronised!'
+first-join: '&2Welcome on this Server!'
