@@ -44,6 +44,7 @@ public class InventorySQLPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         try {
+            getDataFolder().mkdirs();
             FileConfiguration debug = ConfigManager.getConfig(this, "debug.yml");
             LoggingManager.getInstance().setLevel(debug.getInt("debug-level", 1000));
             LoggingManager.getInstance().setPrefix(getDescription().getPrefix());

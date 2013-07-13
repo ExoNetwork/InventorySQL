@@ -54,7 +54,6 @@ public final class ConfigManager {
     }
 
     public void initialise(JavaPlugin plugin) throws IOException, NoSuchAlgorithmException {
-        plugin.getDataFolder().mkdirs();
         //maybe use testserialisation, just need to finally change something
         loadLanguage(plugin);
         loadConfig(plugin);
