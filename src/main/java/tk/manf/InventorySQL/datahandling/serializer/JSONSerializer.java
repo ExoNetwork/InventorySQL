@@ -33,6 +33,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.inventory.ItemStack;
 import tk.manf.InventorySQL.datahandling.Serializer;
@@ -51,7 +53,7 @@ public class JSONSerializer implements Serializer {
             final Map<Integer, String> tmp = new HashMap<Integer, String>(inv.length);
             for (int slot = 0; slot < inv.length; slot++) {
                 LoggingManager.getInstance().d("Saving: " + slot + " # " + inv[slot]);
-                tmp.put(slot, inv[slot] == null ? "null" : serialize(serializeItemStack(inv[slot])));
+                tmp.put(slot, inv[slot] == null ? "null" : serialize(serializeFully(inv[slot])));
             }
             return serialize(tmp).getBytes("UTF-8");
         } catch (IOException ex) {
@@ -67,7 +69,7 @@ public class JSONSerializer implements Serializer {
             }
             ItemStack[] is = new ItemStack[tmp.size()];
             for (int slot : tmp.keySet()) {
-                is[slot] = tmp.get(slot).equals("null") ? null : unpack(deserialize(tmp.get(slot).getBytes("UTF-8"), TypeReferences.STRING_OBJECT_MAP));
+                is[slot] = tmp.get(slot).equals("null") ? null : (ItemStack) deserializeFully(deserialize(tmp.get(slot).getBytes("UTF-8"), TypeReferences.STRING_OBJECT_MAP));
                 LoggingManager.getInstance().d("SLOT " + slot + " is now " + is[slot]);
             }
             return is;
@@ -76,19 +78,31 @@ public class JSONSerializer implements Serializer {
         }
     }
 
-    private Map<String, Object> serializeItemStack(ItemStack is) {
-        final Map<String, Object> parent = is.serialize();
-        if (is.getItemMeta() != null) {
-            final Map<String, Object> meta = new LinkedHashMap<String, Object>(is.getItemMeta().serialize());
-            meta.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias(is.getItemMeta().getClass()));
-            parent.put("meta", meta);
+    private static Map<String, Object> serializeFully(ConfigurationSerializable cs) {
+        Map<String, Object> base = cs.serialize();
+        for (Map.Entry<String, Object> entry : base.entrySet()) {
+            Object obj = entry.getValue();
+            if (obj instanceof ConfigurationSerializable) {
+                base.put(entry.getKey(), serializeFully((ConfigurationSerializable) obj));
+            }
         }
-        return parent;
+        base.put(ConfigurationSerialization.SERIALIZED_TYPE_KEY, ConfigurationSerialization.getAlias(cs.getClass()));
+        return base;
     }
 
-    private static ItemStack unpack(Map<String, Object> map) {
-        deserializeConfiguratioSerializable(map, "meta");
-        return ItemStack.deserialize(map);
+    private static Object deserializeFully(Map<String, Object> map) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            Object obj = entry.getValue();
+            if (obj instanceof Map) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> intern = (Map<String, Object>) obj;
+                if (intern.containsKey(ConfigurationSerialization.SERIALIZED_TYPE_KEY)) {
+                    // Safe to assume it really is a ConfigSerial
+                    map.put(entry.getKey(), deserializeFully(intern));
+                }
+            }
+        }
+        return ConfigurationSerialization.deserializeObject((Map<String, Object>) map);
     }
 
     private String serialize(Object obj) throws JsonProcessingException {
@@ -98,12 +112,4 @@ public class JSONSerializer implements Serializer {
     private <T> T deserialize(byte[] data, TypeReference<T> type) throws IOException {
         return mapper.readValue(data, type);
     }
-
-    @SuppressWarnings("unchecked")
-    private static void deserializeConfiguratioSerializable(Map<String, Object> map, String node) {
-        if (map.get(node) != null && map.get(node) instanceof Map) {
-            map.put(node, ConfigurationSerialization.deserializeObject((Map<String, Object>) map.get(node)));
-        }
-    }
-
 }
