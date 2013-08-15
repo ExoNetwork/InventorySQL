@@ -145,7 +145,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     }
 
     private Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
+        if (connection == null || connection.isClosed() || !connection.isValid(3)) {
             connection = DriverManager.getConnection(ConfigManager.getInstance().getDbURL());
         }
         return connection;
