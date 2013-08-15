@@ -31,7 +31,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.zip.DataFormatException;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
@@ -92,7 +91,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         stmt.close();
     }
 
-    private ItemStack[][] getPlayerInventory(String playername) throws SQLException, DataFormatException, DataHandlingException {
+    private ItemStack[][] getPlayerInventory(String playername) throws SQLException, DataHandlingException {
         Connection con = getConnection();
         @Cleanup
         PreparedStatement stmt = con.prepareStatement(GET_PLAYER_INVENTORY_DATA_QUERY);
