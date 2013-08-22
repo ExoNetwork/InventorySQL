@@ -6,3 +6,23 @@ main: ${main.class}
 prefix: ${project.prefix}
 commands:
  invsql:
+permissions:
+  InventorySQL.*:
+    description: legacy-styled Permission for anything
+    children:
+      InventorySQL.reload: true
+      InventorySQL.save.*: true
+  InventorySQL.reload:
+    description: Allows you to reload Language or Configuration
+    default: op
+  InventorySQL.save.*:
+    description: legacy-styled Permission for anything related to saving
+    children:
+      InventorySQL.save.other: true
+      InventorySQL.save.self: true
+  InventorySQL.save.other:
+    description: Allows you to save other players
+    default: op
+  InventorySQL.save.self:
+    description: Allows you to save yourself
+    default: true

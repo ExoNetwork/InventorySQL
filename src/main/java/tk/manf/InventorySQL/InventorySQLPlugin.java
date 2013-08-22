@@ -84,34 +84,49 @@ public class InventorySQLPlugin extends JavaPlugin {
         //QUICK'N'Dirty gonna use MethodCommand (or implement my own System) to handle them in future updates
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("reload")) {
-                if (args.length > 1) {
-                    if (args[1].equalsIgnoreCase("LANGUAGE")) {
-                        ConfigManager.getInstance().reloadConfig(this, getClassLoader());
-                        return;
-                    } else if (args[1].equalsIgnoreCase("CONFIG")) {
-                        ConfigManager.getInstance().loadLanguage(this);
-                        return;
+                if (sender.hasPermission("InventorySQL.reload")) {
+                    if (args.length > 1) {
+                        if (args[1].equalsIgnoreCase("LANGUAGE")) {
+                            ConfigManager.getInstance().reloadConfig(this, getClassLoader());
+                            return;
+                        } else if (args[1].equalsIgnoreCase("CONFIG")) {
+                            ConfigManager.getInstance().loadLanguage(this);
+                            return;
+                        } else {
+                            sender.sendMessage("You can only reload Language or Config");
+                        }
                     } else {
-                        sender.sendMessage("You can only reload Language or Config");
+                        sender.sendMessage("/" + label + " reload " + "[LANGUAGE||CONFIG]");
+                        return;
                     }
                 } else {
-                    sender.sendMessage("/" + label + " reload " + "[LANGUAGE||CONFIG]");
+                    sender.sendMessage("Sorry, but you have no Permission to do this");
                     return;
                 }
             }
             if (args[0].equalsIgnoreCase("save")) {
                 Player p;
                 if (args.length > 1) {
-                    p = Bukkit.getPlayer(args[1]);
-                    if (p == null) {
-                        sender.sendMessage("Sorry, but this Player is not online!");
+                    if (sender.hasPermission("InventorySQL.save.other")) {
+                        p = Bukkit.getPlayer(args[1]);
+                        if (p == null) {
+                            sender.sendMessage("Sorry, but this Player is not online!");
+                            return;
+                        }
+                    } else {
+                        sender.sendMessage("Sorry, but you have no Permission to do this");
                         return;
                     }
                 } else {
-                    if (sender instanceof Player) {
-                        p = (Player) sender;
+                    if (sender.hasPermission("InventorySQL.save.self")) {
+                        if (sender instanceof Player) {
+                            p = (Player) sender;
+                        } else {
+                            sender.sendMessage("Sorry, but you cannot be saved!");
+                            return;
+                        }
                     } else {
-                        sender.sendMessage("Sorry, but you cannot be saved!");
+                        sender.sendMessage("Sorry, but you have no Permission to do this");
                         return;
                     }
                 }
