@@ -31,7 +31,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.zip.DataFormatException;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
@@ -83,7 +82,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     private void savePlayerInventory(String playername, ItemStack[] content, ItemStack[] armor) throws SQLException, DataHandlingException {
         Connection con = getConnection();
         PreparedStatement stmt = con.prepareStatement(INSERT_INVENTORY_QUERY);
-        stmt.setInt(1, getPlayerID(playername));
+        stmt.setInt(1, getPlayerID(playername, con));
         stmt.setBytes(2, DataHandlingManager.getInstance().serial(content));
         stmt.setBytes(3, DataHandlingManager.getInstance().serial(armor));
         stmt.setString(4, ConfigManager.getInstance().getServerID());
@@ -92,11 +91,11 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         stmt.close();
     }
 
-    private ItemStack[][] getPlayerInventory(String playername) throws SQLException, DataFormatException, DataHandlingException {
+    private ItemStack[][] getPlayerInventory(String playername) throws SQLException, DataHandlingException {
         Connection con = getConnection();
         @Cleanup
         PreparedStatement stmt = con.prepareStatement(GET_PLAYER_INVENTORY_DATA_QUERY);
-        stmt.setInt(1, getPlayerID(playername));
+        stmt.setInt(1, getPlayerID(playername, con));
         stmt.setString(2, ConfigManager.getInstance().getServerID());
         LoggingManager.getInstance().d(stmt.toString());
         ResultSet rs = stmt.executeQuery();
@@ -112,15 +111,15 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     /**
      * Returns the ID of the given Player
      *
+     * @param con Connection object
      * @param playername lowercased name of Player
      * <p/>
      * @return id
      * <p/>
      * @throws SQLException
      */
-    private int getPlayerID(String playername) throws SQLException {
+    private int getPlayerID(String playername, Connection con) throws SQLException {
         int id;
-        Connection con = getConnection();
         PreparedStatement stmt = con.prepareStatement(GET_PLAYER_ID_QUERY);
         stmt.setString(1, playername);
         LoggingManager.getInstance().d(stmt.toString());
@@ -145,7 +144,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     }
 
     private Connection getConnection() throws SQLException {
-        if (connection == null || connection.isClosed()) {
+        if (connection == null || connection.isClosed() || !connection.isValid(3)) {
             connection = DriverManager.getConnection(ConfigManager.getInstance().getDbURL());
         }
         return connection;
