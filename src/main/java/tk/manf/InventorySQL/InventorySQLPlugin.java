@@ -34,6 +34,7 @@ import tk.manf.InventorySQL.commands.CommandManager;
 import tk.manf.InventorySQL.manager.ConfigManager;
 import tk.manf.InventorySQL.manager.DataHandlingManager;
 import tk.manf.InventorySQL.manager.DatabaseManager;
+import tk.manf.InventorySQL.manager.InventoryLockingSystem;
 import tk.manf.InventorySQL.manager.LoggingManager;
 import tk.manf.InventorySQL.manager.LoggingManager.DeveloperMessages;
 import tk.manf.InventorySQL.manager.UpdateEventManager;
@@ -54,6 +55,7 @@ public class InventorySQLPlugin extends JavaPlugin {
             DatabaseManager.getInstance().initialise(this, getClassLoader());
             UpdateEventManager.getInstance().initialise(this);
             DataHandlingManager.getInstance().initialise(getClassLoader());
+            InventoryLockingSystem.getInstance().initialise(this);
             manager = new CommandManager();
             manager.initialise(this);
         } catch (Exception ex) {

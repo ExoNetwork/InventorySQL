@@ -1,3 +1,27 @@
+/**
+ * Copyright (c) 2013 Exo-Network
+ * <p/>
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ * <p/>
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ * <p/>
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ * <p/>
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ * <p/>
+ * 3. This notice may not be removed or altered from any source
+ * distribution.
+ * <p/>
+ * manf info@manf.tk
+ */
 package tk.manf.InventorySQL.commands;
 
 import java.io.ByteArrayOutputStream;
@@ -7,21 +31,23 @@ import org.bukkit.entity.Player;
 import se.ranzdo.bukkit.methodcommand.Arg;
 import se.ranzdo.bukkit.methodcommand.Command;
 import tk.manf.InventorySQL.manager.DatabaseManager;
+import tk.manf.InventorySQL.manager.InventoryLockingSystem;
 
 public class SwitchCommand extends AbstractCommandHandler {
     private static final String IDENTIFIER = "switch";
-
+    
     @Command(identifier = IDENTIFIER,
             description = "Switches your Server",
             permissions = {"InventorySQL.switch.self"})
     public void changeServerSelf(Player sender, @Arg(name = "server") String server) {
         changeServerTarget(sender, server, sender);
     }
-
+    
     @Command(identifier = IDENTIFIER,
             description = "Switches the Server for others",
             permissions = {"InventorySQL.switch.other"})
     public void changeServerTarget(Player sender, @Arg(name = "server") String server, @Arg(name = "target") Player target) {
+        InventoryLockingSystem.getInstance().addLock(target.getName());
         DatabaseManager.getInstance().savePlayer(target);
         ByteArrayOutputStream b = new ByteArrayOutputStream();
         DataOutputStream out = new DataOutputStream(b);
@@ -29,9 +55,11 @@ public class SwitchCommand extends AbstractCommandHandler {
         try {
             out.writeUTF("Connect");
             out.writeUTF(server);
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
         
         target.sendPluginMessage(getPlugin(), "BungeeCord", b.toByteArray());
+        InventoryLockingSystem.getInstance().removeLock(target.getName());
     }
-
+    
 }
