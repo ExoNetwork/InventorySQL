@@ -6,6 +6,7 @@ main: ${main.class}
 prefix: ${project.prefix}
 commands:
  invsql:
+ switch:
 permissions:
   InventorySQL.*:
     description: legacy-styled Permission for anything

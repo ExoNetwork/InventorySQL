@@ -1,9 +1,5 @@
 package tk.manf.InventorySQL.commands;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import se.ranzdo.bukkit.methodcommand.Arg;
@@ -17,6 +13,7 @@ import tk.manf.InventorySQL.util.Language;
 public class InvSQLCommand extends AbstractCommandHandler {
     private static final String IDENTIFIER = "invsql";
     private static final String SAVE = IDENTIFIER + " " + "save";
+    private static final String RELOAD = IDENTIFIER + " " + "reload";
 
     @Command(identifier = SAVE,
             description = "Saves yourself",
@@ -36,7 +33,7 @@ public class InvSQLCommand extends AbstractCommandHandler {
         }
     }
 
-    @Command(identifier = InvSQLCommand.IDENTIFIER,
+    @Command(identifier = InvSQLCommand.RELOAD,
             description = "Reloads the Language or the Config",
             onlyPlayers = false,
             permissions = {"InventorySQL.reload"})
