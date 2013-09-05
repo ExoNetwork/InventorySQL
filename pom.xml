@@ -132,6 +132,10 @@
                     <includes>
                         <include>**/**.java</include>
                     </includes>
+                    <excludes>
+                        <!-- This is just included, but not my source! Credits to the Author-->
+                        <exclude>**/net/h31ix/updater/Updater.java</exclude>
+                    </excludes>
                 </configuration>
                 <executions>
                     <execution>
