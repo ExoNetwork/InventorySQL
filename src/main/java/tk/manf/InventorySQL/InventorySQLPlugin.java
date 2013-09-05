@@ -66,21 +66,19 @@ public class InventorySQLPlugin extends JavaPlugin {
             Updater updater = new Updater(this, "inventorysql", this.getFile(), Updater.UpdateType.DEFAULT, false);
 
             switch (updater.getResult()){
-                default:
-                    LoggingManager.getInstance().log(new Exception(updater.getResult().name() + " nag Developer!"));
-                    break;
                 case SUCCESS:
                     LoggingManager.getInstance().log(999, "Updated to Version: " + updater.getLatestVersionString());
                 case NO_UPDATE:
                     LoggingManager.getInstance().log(999, "You are up to date!");
                     break;
+                default:
                 case UPDATE_AVAILABLE:
                     //will nether happen or call the Ghastbusters
                     break;
             }
         }
 
-        if (ConfigManager.getInstance().isMetricsEnabled()) {
+        if (ConfigManager.getInstance().isMetricsEnabled()) { 
             try {
                 Metrics metrics = new Metrics(this);
                 //Add Graph here
