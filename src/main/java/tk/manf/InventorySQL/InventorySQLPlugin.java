@@ -27,25 +27,22 @@ package tk.manf.InventorySQL;
 
 import java.io.IOException;
 import net.h31ix.updater.Updater;
-import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
+import tk.manf.InventorySQL.commands.CommandManager;
 import tk.manf.InventorySQL.manager.ConfigManager;
 import tk.manf.InventorySQL.manager.DataHandlingManager;
 import tk.manf.InventorySQL.manager.DatabaseManager;
-import tk.manf.InventorySQL.manager.LanguageManager;
 import tk.manf.InventorySQL.manager.LoggingManager;
 import tk.manf.InventorySQL.manager.LoggingManager.DeveloperMessages;
 import tk.manf.InventorySQL.manager.UpdateEventManager;
-import tk.manf.InventorySQL.util.Language;
 
 import static net.h31ix.updater.Updater.UpdateResult.NO_UPDATE;
 
-public class InventorySQLPlugin extends JavaPlugin {
+public class InventorySQLPlugin extends JavaPlugin {    
+    private CommandManager manager;
+    
     @Override
     public void onEnable() {
         try {
@@ -57,6 +54,8 @@ public class InventorySQLPlugin extends JavaPlugin {
             DatabaseManager.getInstance().initialise(this, getClassLoader());
             UpdateEventManager.getInstance().initialise(this);
             DataHandlingManager.getInstance().initialise(getClassLoader());
+            manager = new CommandManager();
+            manager.initialise(this);
         } catch (Exception ex) {
             LoggingManager.getInstance().log(ex);
             getPluginLoader().disablePlugin(this);
@@ -93,82 +92,15 @@ public class InventorySQLPlugin extends JavaPlugin {
             } catch (IOException e) {
             }
         }
-
-
     }
 
     @Override
     public void onDisable() {
+        manager.disable();
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        try {
-            handleCommand(sender, label, args);
-        } catch (Exception ex) {
-            LoggingManager.getInstance().log(ex);
-            LanguageManager.getInstance().sendMessage(sender, Language.COMMAND_ERROR);
-        }
-        return true;
-    }
-
-    public void handleCommand(CommandSender sender, String label, String[] args) throws Exception {
-        //QUICK'N'Dirty gonna use MethodCommand (or implement my own System) to handle them in future updates
-        if (args.length > 0) {
-            if (args[0].equalsIgnoreCase("reload")) {
-                if (sender.hasPermission("InventorySQL.reload")) {
-                    if (args.length > 1) {
-                        if (args[1].equalsIgnoreCase("LANGUAGE")) {
-                            ConfigManager.getInstance().reloadConfig(this, getClassLoader());
-                            return;
-                        } else if (args[1].equalsIgnoreCase("CONFIG")) {
-                            ConfigManager.getInstance().loadLanguage(this);
-                            return;
-                        } else {
-                            sender.sendMessage("You can only reload Language or Config");
-                        }
-                    } else {
-                        sender.sendMessage("/" + label + " reload " + "[LANGUAGE||CONFIG]");
-                        return;
-                    }
-                } else {
-                    sender.sendMessage("Sorry, but you have no Permission to do this");
-                    return;
-                }
-            }
-            if (args[0].equalsIgnoreCase("save")) {
-                Player p;
-                if (args.length > 1) {
-                    if (sender.hasPermission("InventorySQL.save.other")) {
-                        p = Bukkit.getPlayer(args[1]);
-                        if (p == null) {
-                            sender.sendMessage("Sorry, but this Player is not online!");
-                            return;
-                        }
-                    } else {
-                        sender.sendMessage("Sorry, but you have no Permission to do this");
-                        return;
-                    }
-                } else {
-                    if (sender.hasPermission("InventorySQL.save.self")) {
-                        if (sender instanceof Player) {
-                            p = (Player) sender;
-                        } else {
-                            sender.sendMessage("Sorry, but you cannot be saved!");
-                            return;
-                        }
-                    } else {
-                        sender.sendMessage("Sorry, but you have no Permission to do this");
-                        return;
-                    }
-                }
-                DatabaseManager.getInstance().savePlayer(p);
-                sender.sendMessage("Player " + p.getName() + " has been saved!");
-                return;
-            }
-        }
-        sender.sendMessage("/" + label + " reload " + "[LANGUAGE||CONFIG]");
-        sender.sendMessage("/" + label + " save");
+    public ClassLoader getReflectionLoader() {
+        return getClassLoader();
     }
 
 }
