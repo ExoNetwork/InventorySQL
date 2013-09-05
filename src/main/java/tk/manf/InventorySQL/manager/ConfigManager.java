@@ -48,7 +48,7 @@ public final class ConfigManager {
     @Getter
     private FileConfiguration language;
     @Getter
-    private boolean metricsEnabled;
+    private boolean metricsEnabled, autoUpdateEnabled;
 
     private ConfigManager() {
     }
@@ -82,13 +82,15 @@ public final class ConfigManager {
         databaseHandler = config.getString("database.handler", "tk.manf.InventorySQL.database.handler.MySQLDatabaseHandler");
         updateEvents = config.getStringList("update-events");
         metricsEnabled = config.getBoolean("enable-metrics");
+        //add default value in case of user did an upgrade to 3.1 
+        autoUpdateEnabled = config.getBoolean("auto-update", true);
         dbURL = config.getString("database.url");
 
         if (!metricsEnabled) {
             LoggingManager.getInstance().logDeveloperMessage("manf", LoggingManager.DeveloperMessages.METRICS_OFF);
         }
     }
-
+    
     public static FileConfiguration getConfig(JavaPlugin plugin, String name) throws IOException {
         File file = new File(plugin.getDataFolder(), name);
         if (file.createNewFile()) {

@@ -8,3 +8,4 @@ data:
   serializer: 'tk.manf.InventorySQL.datahandling.serializer.JSONSerializer'
   compressor: 'tk.manf.InventorySQL.datahandling.compressor.GZipCompressor'
 enable-metrics: true
+auto-update: true

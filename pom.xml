@@ -4,7 +4,7 @@
 
     <groupId>tk.manf</groupId>
     <artifactId>InventorySQL</artifactId>
-    <version>3.0</version>
+    <version>3.1.0</version>
     <packaging>jar</packaging>
 
     <name>InventorySQL</name>
@@ -149,9 +149,6 @@
                         </goals>
                     </execution>
                 </executions>
-
-        
-
             </plugin>
         </plugins>
     </build>
