@@ -34,6 +34,9 @@ public class ReflectionUtil {
     public static <T> T getInstance(Class<T> type, ClassLoader loader, String target) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         Class<?> t = loader.loadClass(target);
         LoggingManager.getInstance().d("Loading " + t.getName());
+        if(t.getAnnotation(Deprecated.class) != null) {
+            LoggingManager.getInstance().logDeveloperMessage("manf", LoggingManager.DeveloperMessages.DEPRECATED_CLASS);
+        }
         return type.cast(t.newInstance());
     }
 

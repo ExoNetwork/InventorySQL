@@ -86,8 +86,8 @@ public class LoggingManager {
         //#SUPPORT_DEVELOPERS
         //Just remind people to be supportive.
         METRICS_OFF("You turned metrics off :(. Metrics is a good way to support Developers! ( You should also consider donating :) )"),
-        METRICS_LOADED("Thanks for supporting us and using Metrics :)");
-        
+        METRICS_LOADED("Thanks for supporting us and using Metrics :)"),
+        DEPRECATED_CLASS("Sorry, but the loaded class is deprecated");
         @Getter
         private String message;
     }
