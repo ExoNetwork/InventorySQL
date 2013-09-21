@@ -31,9 +31,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.bukkit.Bukkit;
 
 public class LoggingManager {
-    private static final Logger logger = Logger.getLogger("Minecraft");
+    private static final Logger logger = Bukkit.getLogger();
     @Setter
     private String prefix;
     @Setter
@@ -76,7 +77,7 @@ public class LoggingManager {
         //public static final int DOCTOR = 499;
         //public static final int IS = 399;
         //pulic static final int JUST = 299;
-        //public static final int EPIC = 199;
+        public static final int DEVELOPER = 199;
         public static final int DEVELOPER_MESSAGE = 99;
         public static final int ERROR = 0;
     }
