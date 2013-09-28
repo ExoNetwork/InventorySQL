@@ -23,12 +23,12 @@
  * manf                   info@manf.tk
  */
 
-package tk.manf.InventorySQL.commands;
+package tk.manf.InventorySQL;
 
 import java.util.ArrayList;
 import java.util.List;
 import se.ranzdo.bukkit.methodcommand.CommandHandler;
-import tk.manf.InventorySQL.InventorySQLPlugin;
+import tk.manf.InventorySQL.commands.InvSQLCommand;
 
 public class CommandManager {
     private final List<AbstractCommandHandler> commands;

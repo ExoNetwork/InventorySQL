@@ -40,6 +40,7 @@ import tk.manf.InventorySQL.datahandling.Serializer;
 import tk.manf.InventorySQL.datahandling.exceptions.SerializationException;
 import tk.manf.InventorySQL.manager.LoggingManager;
 
+@Deprecated
 public class JSONSerializer implements Serializer {
     private ObjectMapper mapper;
 

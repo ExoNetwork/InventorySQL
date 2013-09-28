@@ -23,13 +23,12 @@
  * manf                   info@manf.tk
  */
 
-package tk.manf.InventorySQL.commands;
+package tk.manf.InventorySQL;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import se.ranzdo.bukkit.methodcommand.CommandHandler;
-import tk.manf.InventorySQL.InventorySQLPlugin;
 
 @NoArgsConstructor
 /**
@@ -41,6 +40,10 @@ public abstract class AbstractCommandHandler {
     
     public final InventorySQLPlugin getPlugin() {
         return commandManager.getPlugin();
+    }
+    
+    public final ClassLoader getClassLoader() {
+        return commandManager.getPlugin().getReflectionLoader();
     }
     
     public final AbstractCommandHandler initialise(CommandHandler handler) {

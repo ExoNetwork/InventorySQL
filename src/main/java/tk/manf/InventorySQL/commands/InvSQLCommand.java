@@ -25,6 +25,7 @@
 
 package tk.manf.InventorySQL.commands;
 
+import tk.manf.InventorySQL.AbstractCommandHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import se.ranzdo.bukkit.methodcommand.Arg;
@@ -65,7 +66,7 @@ public class InvSQLCommand extends AbstractCommandHandler {
     public void reload(CommandSender sender, @Arg(name = "Language|Config") String target) {
         try {
             if (target.equalsIgnoreCase("LANGUAGE")) {
-                ConfigManager.getInstance().reloadConfig(getPlugin(), getPlugin().getReflectionLoader());
+                ConfigManager.getInstance().reloadConfig(getPlugin(), getClassLoader());
             } else if (target.equalsIgnoreCase("CONFIG")) {
                 ConfigManager.getInstance().loadLanguage(getPlugin());
             } else {

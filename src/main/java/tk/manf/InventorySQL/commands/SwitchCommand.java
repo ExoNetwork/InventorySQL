@@ -25,6 +25,7 @@
 
 package tk.manf.InventorySQL.commands;
 
+import tk.manf.InventorySQL.AbstractCommandHandler;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;

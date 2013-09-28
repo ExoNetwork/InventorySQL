@@ -50,9 +50,8 @@ public final class DatabaseManager implements Listener {
         armor = new HashMap<String, ItemStack[]>(0);
     }
 
-    public void initialise(JavaPlugin plugin, ClassLoader cl) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    public void initialise(JavaPlugin plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        reload(cl);
     }
 
     public void reload(ClassLoader cl) throws IllegalAccessException, InstantiationException, ClassNotFoundException{
