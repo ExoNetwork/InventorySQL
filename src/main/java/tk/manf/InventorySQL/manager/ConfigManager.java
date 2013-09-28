@@ -64,10 +64,10 @@ public final class ConfigManager {
         language = getConfig(plugin, "language.yml");
     }
 
-    public void reloadConfig(JavaPlugin plugin, ClassLoader cl) throws IOException, IllegalAccessException, ClassNotFoundException, InstantiationException, NoSuchAlgorithmException {
+    public void reloadConfig(JavaPlugin plugin, ClassLoader cl) throws Exception {
         loadConfig(plugin);
         DataHandlingManager.getInstance().initialise(cl);
-        DatabaseManager.getInstance().reload(cl);
+        DatabaseManager.getInstance().reload(plugin, cl);
     }
 
     public String getLangugagePattern(String id, String def) {

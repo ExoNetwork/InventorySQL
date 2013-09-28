@@ -1,30 +1,32 @@
 /**
  * Copyright (c) 2013 Exo-Network
- * 
+ * <p/>
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
  * arising from the use of this software.
- * 
+ * <p/>
  * Permission is granted to anyone to use this software for any purpose,
  * including commercial applications, and to alter it and redistribute it
  * freely, subject to the following restrictions:
- * 
- *    1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 
- *    2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 
- *    3. This notice may not be removed or altered from any source
- *    distribution.
- * 
- * manf                   info@manf.tk
+ * <p/>
+ * 1. The origin of this software must not be misrepresented; you must not
+ * claim that you wrote the original software. If you use this software
+ * in a product, an acknowledgment in the product documentation would be
+ * appreciated but is not required.
+ * <p/>
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ * misrepresented as being the original software.
+ * <p/>
+ * 3. This notice may not be removed or altered from any source
+ * distribution.
+ * <p/>
+ * manf info@manf.tk
  */
-
 package tk.manf.InventorySQL.database.handler;
 
+import com.google.common.io.CharStreams;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -36,6 +38,7 @@ import lombok.SneakyThrows;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.java.JavaPlugin;
 import tk.manf.InventorySQL.database.DatabaseHandler;
 import tk.manf.InventorySQL.datahandling.exceptions.DataHandlingException;
 import tk.manf.InventorySQL.manager.ConfigManager;
@@ -54,6 +57,13 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     @SneakyThrows(ClassNotFoundException.class)
     public MySQLDatabaseHandler() {
         Class.forName("com.mysql.jdbc.Driver");
+    }
+
+    public void init(JavaPlugin plugin) throws SQLException, IOException {
+        Connection con = getConnection();
+        @Cleanup
+        Statement stmt = con.createStatement();
+        stmt.execute(CharStreams.toString(new InputStreamReader(plugin.getResource("mysql/CREATE.sql"))));
     }
 
     public void savePlayerInventory(Player player) throws Exception {
@@ -111,7 +121,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     /**
      * Returns the ID of the given Player
      *
-     * @param con Connection object
+     * @param con        Connection object
      * @param playername lowercased name of Player
      * <p/>
      * @return id
@@ -149,4 +159,5 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         }
         return connection;
     }
+
 }

@@ -54,8 +54,9 @@ public final class DatabaseManager implements Listener {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
-    public void reload(ClassLoader cl) throws IllegalAccessException, InstantiationException, ClassNotFoundException{
-        handler = ReflectionUtil.getInstance(DatabaseHandler.class, cl, ConfigManager.getInstance().getDatabaseHandler());    
+    public void reload(JavaPlugin plugin, ClassLoader cl) throws Exception{
+        handler = ReflectionUtil.getInstance(DatabaseHandler.class, cl, ConfigManager.getInstance().getDatabaseHandler());
+        handler.init(plugin);
     }
     
     @SneakyThrows(value = Exception.class)

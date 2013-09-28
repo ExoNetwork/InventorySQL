@@ -30,10 +30,10 @@ import net.h31ix.updater.Updater;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
-import tk.manf.InventorySQL.commands.CommandManager;
 import tk.manf.InventorySQL.manager.ConfigManager;
 import tk.manf.InventorySQL.manager.DataHandlingManager;
 import tk.manf.InventorySQL.manager.DatabaseManager;
+import tk.manf.InventorySQL.manager.DependenciesManager;
 import tk.manf.InventorySQL.manager.InventoryLockingSystem;
 import tk.manf.InventorySQL.manager.LoggingManager;
 import tk.manf.InventorySQL.manager.LoggingManager.DeveloperMessages;
@@ -41,9 +41,9 @@ import tk.manf.InventorySQL.manager.UpdateEventManager;
 
 import static net.h31ix.updater.Updater.UpdateResult.NO_UPDATE;
 
-public class InventorySQLPlugin extends JavaPlugin {    
+public final class InventorySQLPlugin extends JavaPlugin {
     private CommandManager manager;
-    
+
     @Override
     public void onEnable() {
         try {
@@ -52,7 +52,8 @@ public class InventorySQLPlugin extends JavaPlugin {
             LoggingManager.getInstance().setLevel(debug.getInt("debug-level", 1000));
             LoggingManager.getInstance().setPrefix(getDescription().getPrefix());
             ConfigManager.getInstance().initialise(this);
-            DatabaseManager.getInstance().initialise(this, getClassLoader());
+            DependenciesManager.getInstance().initialise(this, getClassLoader());
+            DatabaseManager.getInstance().initialise(this);
             UpdateEventManager.getInstance().initialise(this);
             DataHandlingManager.getInstance().initialise(getClassLoader());
             InventoryLockingSystem.getInstance().initialise(this);
@@ -66,7 +67,6 @@ public class InventorySQLPlugin extends JavaPlugin {
         //May add just a check and let the user update manually?
         if (ConfigManager.getInstance().isAutoUpdateEnabled()) {
             Updater updater = new Updater(this, "inventorysql", this.getFile(), Updater.UpdateType.DEFAULT, false);
-
             switch (updater.getResult()){
                 case SUCCESS:
                     LoggingManager.getInstance().log(999, "Updated to Version: " + updater.getLatestVersionString());
@@ -80,7 +80,7 @@ public class InventorySQLPlugin extends JavaPlugin {
             }
         }
 
-        if (ConfigManager.getInstance().isMetricsEnabled()) { 
+        if (ConfigManager.getInstance().isMetricsEnabled()) {
             try {
                 Metrics metrics = new Metrics(this);
                 //Add Graph here
@@ -99,7 +99,7 @@ public class InventorySQLPlugin extends JavaPlugin {
         manager.disable();
     }
 
-    public ClassLoader getReflectionLoader() {
+    ClassLoader getReflectionLoader() {
         return getClassLoader();
     }
 

@@ -26,8 +26,28 @@
 package tk.manf.InventorySQL.database;
 
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 public interface DatabaseHandler {
+    /**
+     * Called whenever Handler is initialised by Databasehandler
+     * Used to createDatabases etc
+     * @param JavaPlugin instance
+     */
+    public void init(JavaPlugin plugin) throws Exception;
+    
+    /**
+     * Saves the Inventory for the given Player
+     * @param player Player
+     * @throws Exception if something went wrong
+     */
     public void savePlayerInventory(Player player) throws Exception;
+    
+    /**
+     * Loads the Inventory for the given Player
+     * @param player Player
+     * @return sucess
+     * @throws Exception if something went wrong
+     */
     public boolean loadPlayerInventory(Player player) throws Exception;
 }
