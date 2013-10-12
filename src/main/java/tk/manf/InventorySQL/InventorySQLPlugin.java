@@ -26,7 +26,7 @@
 package tk.manf.InventorySQL;
 
 import java.io.IOException;
-import net.h31ix.updater.Updater;
+import net.gravitydevelopment.updater.Updater;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
@@ -38,8 +38,6 @@ import tk.manf.InventorySQL.manager.InventoryLockingSystem;
 import tk.manf.InventorySQL.manager.LoggingManager;
 import tk.manf.InventorySQL.manager.LoggingManager.DeveloperMessages;
 import tk.manf.InventorySQL.manager.UpdateEventManager;
-
-import static net.h31ix.updater.Updater.UpdateResult.NO_UPDATE;
 
 public final class InventorySQLPlugin extends JavaPlugin {
     private CommandManager manager;
@@ -66,16 +64,14 @@ public final class InventorySQLPlugin extends JavaPlugin {
 
         //May add just a check and let the user update manually?
         if (ConfigManager.getInstance().isAutoUpdateEnabled()) {
-            Updater updater = new Updater(this, "inventorysql", this.getFile(), Updater.UpdateType.DEFAULT, false);
+            Updater updater = new Updater(this, 38723, this.getFile(), Updater.UpdateType.DEFAULT, false);
             switch (updater.getResult()){
                 case SUCCESS:
-                    LoggingManager.getInstance().log(999, "Updated to Version: " + updater.getLatestVersionString());
+                    LoggingManager.getInstance().log(999, "Updated to Version: " + updater.getLatestFileLink());
                 case NO_UPDATE:
                     LoggingManager.getInstance().log(999, "You are up to date!");
                     break;
                 default:
-                case UPDATE_AVAILABLE:
-                    //will nether happen or call the Ghastbusters
                     break;
             }
         }
