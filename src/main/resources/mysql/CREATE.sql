@@ -22,7 +22,7 @@ CREATE  TABLE IF NOT EXISTS `inventory` (
   UNIQUE INDEX `adf` USING BTREE (`playerID` ASC, `server` ASC) ,
   CONSTRAINT `fk_inventories_player`
     FOREIGN KEY (`playerID` )
-    REFERENCES `{DB}`.`player` (`id` )
+    REFERENCES `player` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
