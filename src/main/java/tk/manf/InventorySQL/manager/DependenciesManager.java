@@ -39,6 +39,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class DependenciesManager implements Listener {
     private JavaPlugin plugin;
     private ClassLoader loader;
+    private List<String> dependencies;
 
     private DependenciesManager() {
     }
@@ -47,6 +48,7 @@ public final class DependenciesManager implements Listener {
         this.plugin = plugin;
         this.loader = loader;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        dependencies = getDependencies(plugin.getDescription());
         checkDatabaseHandler();
     }
 
@@ -101,7 +103,7 @@ public final class DependenciesManager implements Listener {
     }
 
     private DependencyType scanPlugin(Plugin p) {
-        if (isDependency(p.getName())) {
+        if (dependencies.contains(p.getName())) {
             return DependencyType.PARENT;
         }
         if (getDependencies(p.getDescription()).contains(plugin.getDescription().getName())) {
@@ -110,14 +112,19 @@ public final class DependenciesManager implements Listener {
         return DependencyType.NONE;
     }
 
-    private boolean isDependency(String name) {
-        return plugin.getDescription().getDepend().contains(name) || plugin.getDescription().getSoftDepend().contains(name);
-    }
-
     private List<String> getDependencies(PluginDescriptionFile pdf) {
-        return new ImmutableList.Builder<String>().addAll(pdf.getSoftDepend()).addAll(pdf.getDepend()).build();
+        ImmutableList.Builder<String> builder = new ImmutableList.Builder<String>();
+        addToBuilder(builder, pdf.getDepend());
+        addToBuilder(builder, pdf.getSoftDepend());
+        return builder.build();
     }
 
+    private void addToBuilder(ImmutableList.Builder<String> builder, List<String> list) {
+        if(list != null) {
+            builder.addAll(list);
+        }
+    }
+    
     @Getter
     private static final DependenciesManager instance = new DependenciesManager();
 
