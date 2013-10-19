@@ -68,6 +68,7 @@ public final class InventorySQLPlugin extends JavaPlugin {
             switch (updater.getResult()){
                 case SUCCESS:
                     LoggingManager.getInstance().log(999, "Updated to Version: " + updater.getLatestFileLink());
+                    break;
                 case NO_UPDATE:
                     LoggingManager.getInstance().log(999, "You are up to date!");
                     break;

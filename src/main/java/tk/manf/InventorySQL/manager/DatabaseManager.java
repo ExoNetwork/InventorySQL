@@ -55,8 +55,10 @@ public final class DatabaseManager implements Listener {
     }
 
     public void reload(JavaPlugin plugin, ClassLoader cl) throws Exception{
+        LoggingManager.getInstance().d("Reloading DatabaseManager");
         handler = ReflectionUtil.getInstance(DatabaseHandler.class, cl, ConfigManager.getInstance().getDatabaseHandler());
         handler.init(plugin);
+        LoggingManager.getInstance().d("Handler choosen: " + handler);
     }
     
     @SneakyThrows(value = Exception.class)
@@ -90,6 +92,7 @@ public final class DatabaseManager implements Listener {
         } catch (Exception ex) {
             //Restore player Equipment, because we may accidently have removed it
             removePlayerInventoryCache(true, p.getName(), p.getInventory());
+            LoggingManager.getInstance().log(LoggingManager.Level.ERROR, "Your Probelm was caused by: " + handler);
             LoggingManager.getInstance().log(ex);
         }
     }

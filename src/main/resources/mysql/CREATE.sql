@@ -1,7 +1,7 @@
 -- -----------------------------------------------------
 -- Player Table
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `player` (
+CREATE TABLE IF NOT EXISTS `player` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `playername` VARCHAR(16) NULL ,
   PRIMARY KEY (`id`) )
@@ -11,7 +11,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Inventory Table
 -- -----------------------------------------------------
-CREATE  TABLE IF NOT EXISTS `inventory` (
+CREATE TABLE IF NOT EXISTS `inventory` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `playerID` INT NOT NULL ,
   `content` BLOB NULL ,
@@ -25,4 +25,4 @@ CREATE  TABLE IF NOT EXISTS `inventory` (
     REFERENCES `player` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+ENGINE = InnoDB
