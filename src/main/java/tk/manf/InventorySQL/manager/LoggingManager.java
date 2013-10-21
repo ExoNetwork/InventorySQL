@@ -100,7 +100,7 @@ public class LoggingManager {
         @Getter
         private String message;
     }
-
+    
     static class Herobrine {
         //Darkness
     }

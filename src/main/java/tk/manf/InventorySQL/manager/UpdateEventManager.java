@@ -1,25 +1,25 @@
 /**
  * Copyright (c) 2013 Exo-Network
- * 
+ *
  * This software is provided 'as-is', without any express or implied
  * warranty. In no event will the authors be held liable for any damages
  * arising from the use of this software.
- * 
+ *
  * Permission is granted to anyone to use this software for any purpose,
  * including commercial applications, and to alter it and redistribute it
  * freely, subject to the following restrictions:
- * 
+ *
  *    1. The origin of this software must not be misrepresented; you must not
  *    claim that you wrote the original software. If you use this software
  *    in a product, an acknowledgment in the product documentation would be
  *    appreciated but is not required.
- * 
+ *
  *    2. Altered source versions must be plainly marked as such, and must not be
  *    misrepresented as being the original software.
- * 
+ *
  *    3. This notice may not be removed or altered from any source
  *    distribution.
- * 
+ *
  * manf                   info@manf.tk
  */
 
@@ -74,11 +74,11 @@ public final class UpdateEventManager implements Listener {
     private void put(String name, Class<? extends Event> event, String method) {
         put(name, event, method, true);
     }
-    
+
     private void put(String name, Class<? extends Event> event, String method, boolean useSuper) {
         try {
             LoggingManager.getInstance().d("Handling " + event.getName() + " AS " + method + "(Using super: " + useSuper + ")");
-            events.put(name, new UpdateEvent(event, getClass().getMethod(method, useSuper ? event.getSuperclass():event)));
+            events.put(name, new UpdateEvent(event, getClass().getMethod(method, useSuper ? event.getSuperclass() : event)));
         } catch (Exception ex) {
             LoggingManager.getInstance().log(ex);
         }
@@ -113,6 +113,7 @@ final class UpdateEvent {
                         m.invoke(listener, event);
                     }
                 } catch (Exception e) {
+                    LoggingManager.getInstance().log(LoggingManager.Level.ERROR, "Error with Event: " + String.valueOf(listener) + " - EV: " + event == null ? "failed" : event.getEventName());
                     LoggingManager.getInstance().log(e);
                 }
             }

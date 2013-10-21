@@ -38,13 +38,15 @@ import lombok.Cleanup;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class ConfigManager {
     @Getter
     private List<String> updateEvents;
     @Getter
-    private String dbURL, serializer, compressor, databaseHandler, serverID;
+    private String dbURL, serializer, compressor, databaseHandler;
+    private String serverID;
     @Getter
     private FileConfiguration language;
     @Getter
@@ -73,7 +75,12 @@ public final class ConfigManager {
     public String getLangugagePattern(String id, String def) {
         return language.getString(id, def);
     }
-
+    
+    //Return different ID for Player in case of multiworld support
+    public String getServerID(Player player) {
+        return serverID; // + " - " + player.getWorld().getName();
+    }
+    
     private void loadConfig(JavaPlugin plugin) throws IOException, NoSuchAlgorithmException {
         FileConfiguration config = getConfig(plugin, "config.yml");
         serverID = md5(config.getString("serverID", ""));
@@ -106,7 +113,7 @@ public final class ConfigManager {
         }
         return YamlConfiguration.loadConfiguration(file);
     }
-
+    
     private static String md5(String input) throws NoSuchAlgorithmException, UnsupportedEncodingException {
         return toHex(MessageDigest.getInstance("MD5").digest(input.getBytes("UTF-8")));
     }

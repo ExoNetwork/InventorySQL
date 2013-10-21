@@ -25,4 +25,18 @@ CREATE TABLE IF NOT EXISTS `inventory` (
     REFERENCES `player` (`id` )
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
-ENGINE = InnoDB
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Enderchest Table
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `enderchest` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `playerID` int(11) NOT NULL,
+  `content` blob,
+  `server` char(32) DEFAULT NULL,
+  PRIMARY KEY (`id`,`playerID`),
+  UNIQUE KEY `adf` (`playerID`,`server`) USING BTREE,
+  KEY `fk_enderchest_player_idx` (`playerID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1

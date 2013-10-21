@@ -38,6 +38,7 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -50,18 +51,25 @@ import tk.manf.InventorySQL.manager.LoggingManager;
 @ToString(doNotUseGetters = true)
 public class MySQLDatabaseHandler implements DatabaseHandler {
     private Connection connection;
+    //DATABASES
     private static final String PLAYER_DATABASE = "player";
     private static final String INVENTORY_DATABASE = "inventory";
+    private static final String ENDERCHEST_DATABASE = "enderchest";
+    //LOAD QUERIES
     private static final String GET_PLAYER_ID_QUERY = "SELECT id FROM " + PLAYER_DATABASE + " WHERE playername=? LIMIT 1";
     private static final String GET_PLAYER_INVENTORY_DATA_QUERY = "SELECT content, armor FROM " + INVENTORY_DATABASE + " WHERE playerID=? AND server=? LIMIT 1";
+    private static final String GET_PLAYER_ENDERCHEST_DATA_QUERY = "SELECT content FROM " + ENDERCHEST_DATABASE + " WHERE playerID=? AND server=? LIMIT 1";
+    //INSERT QUERIES
     private static final String INSERT_PLAYER_QUERY = "INSERT INTO " + PLAYER_DATABASE + " (id, playername) VALUES (NULL, ?)";
     private static final String INSERT_INVENTORY_QUERY = "INSERT INTO " + INVENTORY_DATABASE + " (id, playerID, content, armor, server) VALUES (NULL, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE content=VALUES(content), armor=VALUES(armor)";
+    private static final String INSERT_ENDERCHEST_QUERY = "INSERT INTO " + ENDERCHEST_DATABASE + " (id, playerID, content, server) VALUES (NULL, ?, ?, ?) ON DUPLICATE KEY UPDATE content=VALUES(content)";
 
     @SneakyThrows(ClassNotFoundException.class)
     public MySQLDatabaseHandler() {
         Class.forName("com.mysql.jdbc.Driver");
     }
 
+    @Override
     public void init(JavaPlugin plugin) throws SQLException, IOException {
         Connection con = getConnection();
         @Cleanup
@@ -73,17 +81,20 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         }
     }
 
+    @Override
     public void savePlayerInventory(Player player) throws Exception {
-        savePlayerInventory(player.getName(), player.getInventory());
+        savePlayerInventory(ConfigManager.getInstance().getServerID(player), player.getName(), player.getInventory(), player.getEnderChest());
     }
 
+    @Override
     public boolean loadPlayerInventory(Player player) throws Exception {
         LoggingManager.getInstance().d("Getting Player Inventory");
-        final ItemStack[][] tmp = getPlayerInventory(player.getName().toLowerCase());
+        final ItemStack[][] tmp = getPlayerInventory(ConfigManager.getInstance().getServerID(player), player.getName().toLowerCase());
         if (tmp != null) {
             LoggingManager.getInstance().d("Inventory found! Replacing");
             player.getInventory().setContents(tmp[0]);
             player.getInventory().setArmorContents(tmp[1]);
+            player.getEnderChest().setContents(tmp[2]);
             return true;
         } else {
             LoggingManager.getInstance().d("No Inventory found");
@@ -92,34 +103,34 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
 
     }
 
-    private void savePlayerInventory(String playername, PlayerInventory inv) throws SQLException, DataHandlingException {
-        savePlayerInventory(playername, inv.getContents(), inv.getArmorContents());
+    private void savePlayerInventory(String serverID, String playername, PlayerInventory inv, Inventory ender) throws SQLException, DataHandlingException {
+        savePlayerInventory(serverID, playername, inv.getContents(), inv.getArmorContents(), ender.getContents());
     }
 
-    private void savePlayerInventory(String playername, ItemStack[] content, ItemStack[] armor) throws SQLException, DataHandlingException {
+    private void savePlayerInventory(String serverID, String playername, ItemStack[] content, ItemStack[] armor, ItemStack[] ender) throws SQLException, DataHandlingException {
         Connection con = getConnection();
-        PreparedStatement stmt = con.prepareStatement(INSERT_INVENTORY_QUERY);
-        stmt.setInt(1, getPlayerID(playername, con));
-        stmt.setBytes(2, DataHandlingManager.getInstance().serial(content));
-        stmt.setBytes(3, DataHandlingManager.getInstance().serial(armor));
-        stmt.setString(4, ConfigManager.getInstance().getServerID());
-        LoggingManager.getInstance().d(stmt.toString());
-        stmt.executeUpdate();
-        stmt.close();
+        final int playerID = getPlayerID(playername, con);
+
+        //Normal Inventory
+        update(con, INSERT_INVENTORY_QUERY, playerID, serverID, new ItemStack[][]{content, armor});
+        //Ender Chest
+        update(con, INSERT_ENDERCHEST_QUERY, playerID, serverID, new ItemStack[][]{ender});
     }
 
-    private ItemStack[][] getPlayerInventory(String playername) throws SQLException, DataHandlingException {
+    private ItemStack[][] getPlayerInventory(String serverID, String playername) throws SQLException, DataHandlingException {
         Connection con = getConnection();
+        final int playerID = getPlayerID(playername, con);
         @Cleanup
-        PreparedStatement stmt = con.prepareStatement(GET_PLAYER_INVENTORY_DATA_QUERY);
-        stmt.setInt(1, getPlayerID(playername, con));
-        stmt.setString(2, ConfigManager.getInstance().getServerID());
-        LoggingManager.getInstance().d(stmt.toString());
-        ResultSet rs = stmt.executeQuery();
-        if (rs.next()) {
+        PreparedStatement invStmt = prepare(con, GET_PLAYER_INVENTORY_DATA_QUERY, playerID, serverID);
+        ResultSet inv = invStmt.executeQuery();
+        @Cleanup
+        PreparedStatement enderStmt = prepare(con, GET_PLAYER_ENDERCHEST_DATA_QUERY, playerID, serverID);
+        ResultSet ender = enderStmt.executeQuery();
+        if (inv.next()) {
             return new ItemStack[][]{
-                DataHandlingManager.getInstance().deserial(rs.getBytes("content")),
-                DataHandlingManager.getInstance().deserial(rs.getBytes("armor"))
+                DataHandlingManager.getInstance().deserial(inv.getBytes("content")),
+                DataHandlingManager.getInstance().deserial(inv.getBytes("armor")),
+                ender.next() ? DataHandlingManager.getInstance().deserial(inv.getBytes("content")) : new ItemStack[]{}
             };
         }
         return null;
@@ -128,7 +139,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     /**
      * Returns the ID of the given Player
      *
-     * @param con        Connection object
+     * @param con Connection object
      * @param playername lowercased name of Player
      * <p/>
      * @return id
@@ -167,4 +178,25 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         return connection;
     }
 
+    private PreparedStatement prepare(Connection con, String query, int playerID, String serverID) throws SQLException {
+        PreparedStatement stmt = con.prepareStatement(query);
+        stmt.setInt(1, playerID);
+        stmt.setString(2, serverID);
+        LoggingManager.getInstance().d(stmt.toString());
+        return stmt;
+    }
+
+    private void update(Connection con, String query, int playerID, String serverID, ItemStack[][] data) throws SQLException, DataHandlingException {
+        PreparedStatement stmt = con.prepareStatement(query);
+        stmt.setInt(1, playerID);
+        int i = 2;
+        for (ItemStack[] is : data) {
+            stmt.setBytes(i, DataHandlingManager.getInstance().serial(is));
+            i++;
+        }
+        stmt.setString(i, serverID);
+        LoggingManager.getInstance().d(stmt.toString());
+        stmt.executeUpdate();
+        stmt.close();
+    }
 }
