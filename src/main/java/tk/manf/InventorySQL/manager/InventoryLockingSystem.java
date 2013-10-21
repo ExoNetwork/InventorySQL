@@ -98,11 +98,7 @@ public class InventoryLockingSystem implements Listener {
     }
     
     private void check(Cancellable ev, HumanEntity player) {
-        cancel(ev, isLocked(player.getName()));
-    }
-    
-    private void cancel(Cancellable ev, boolean cancel) {
-        ev.setCancelled(cancel);
+        ev.setCancelled(isLocked(player.getName()));
     }
 
     @Getter
