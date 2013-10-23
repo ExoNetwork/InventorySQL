@@ -1,0 +1,6 @@
+tables:
+  prefix: ''
+  suffix: ''
+  player: 'player'
+  inventory: 'inventory'
+  enderchest: 'enderchest'
