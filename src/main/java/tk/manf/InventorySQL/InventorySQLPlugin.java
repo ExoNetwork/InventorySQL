@@ -30,6 +30,7 @@ import net.gravitydevelopment.updater.Updater;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
+import tk.manf.InventorySQL.manager.AddonManager;
 import tk.manf.InventorySQL.manager.ConfigManager;
 import tk.manf.InventorySQL.manager.DataHandlingManager;
 import tk.manf.InventorySQL.manager.DatabaseManager;
@@ -94,6 +95,7 @@ public final class InventorySQLPlugin extends JavaPlugin {
     @Override
     public void onDisable() {
         manager.disable();
+        AddonManager.getInstance().disable(this);
     }
 
     ClassLoader getReflectionLoader() {

@@ -77,6 +77,7 @@ public final class DependenciesManager implements Listener {
             try {
                 LoggingManager.getInstance().d("Database Manager found!");
                 DatabaseManager.getInstance().reload(plugin, loader);
+                AddonManager.getInstance().initialise(plugin, loader);
                 loader = null;
                 plugin = null;
             } catch (Exception ex) {

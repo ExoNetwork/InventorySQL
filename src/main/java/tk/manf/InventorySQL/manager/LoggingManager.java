@@ -76,7 +76,10 @@ public class LoggingManager {
     }
 
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    static class Level {
+    public static class Level {
+        /**
+         * Totally Debug Level
+         */
         public static final int DEBUG = 999;
         //public static final int NO = 899;
         //public static final int BODY = 799;
@@ -84,9 +87,15 @@ public class LoggingManager {
         //public static final int THE = 599;
         //public static final int DOCTOR = 499;
         //public static final int IS = 399;
-        //pulic static final int JUST = 299;
+        /**
+         * Stuff for Addons
+         */
+        public static final int ADDONS = 299;
         public static final int DEVELOPER = 199;
         public static final int DEVELOPER_MESSAGE = 99;
+        /**
+         * Errors should be logged anyway
+         */
         public static final int ERROR = 0;
     }
 
