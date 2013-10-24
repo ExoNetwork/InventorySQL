@@ -121,7 +121,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
             return new ItemStack[][]{
                 DataHandlingManager.getInstance().deserial(inv.getBytes("content")),
                 DataHandlingManager.getInstance().deserial(inv.getBytes("armor")),
-                ender.next() ? DataHandlingManager.getInstance().deserial(inv.getBytes("content")) : new ItemStack[]{}
+                ender.next() ? DataHandlingManager.getInstance().deserial(ender.getBytes("content")) : new ItemStack[]{}
             };
         }
         return null;
