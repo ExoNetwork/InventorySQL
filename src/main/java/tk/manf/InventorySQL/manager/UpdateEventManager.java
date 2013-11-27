@@ -122,7 +122,7 @@ final class UpdateEvent {
 
     public void register(Listener listener, Plugin plugin) {
         LoggingManager.getInstance().d("Registering " + event.getName());
-        manager.registerEvent(event, listener, EventPriority.NORMAL, exec, plugin, true);
+        manager.registerEvent(event, listener, EventPriority.NORMAL, exec, plugin, false);
     }
     @Setter
     private static PluginManager manager;

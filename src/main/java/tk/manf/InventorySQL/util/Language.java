@@ -50,11 +50,12 @@ public final class Language {
         instances.add(this);
     }
 
-    public static final int PHRASES = 5;
+    public static final int PHRASES = 6;
     public static final Language COMMAND_ERROR = new Language("command.error", "Error while performing this Command!");
     public static final Language SAVING_INVENTORY = new Language("inventory.saving", "Your Inventory is saving...");
     public static final Language SAVED_INVENTORY = new Language("inventory.saved", "Your Inventory has been saved!");
     public static final Language SYNCED_INVENTORY = new Language("inventory.synced", "Your Inventory has successfully been synchronised!");
     public static final Language FIRST_JOIN = new Language("first-join", "Welcome on this Server!");
+    public static final Language KICKED_RELOAD = new Language("kick.reload", "Reloading Server");
     private static List<Language> instances;
 }

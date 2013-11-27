@@ -37,12 +37,16 @@ public class LanguageManager {
     private LanguageManager() {
         cache = new HashMap<String, MessageFormat>(Language.PHRASES);
     }
-   
+
     public void sendMessage(CommandSender player, Language lang, Object... args) {
+        player.sendMessage(getMessage(lang, args));
+    }
+
+    public String getMessage(Language lang, Object... args) {
         if (!cache.containsKey(lang.getId())) {
             cache.put(lang.getId(), new MessageFormat(lang.getPattern()));
         }
-        player.sendMessage(cache.get(lang.getId()).format(args));
+        return cache.get(lang.getId()).format(args);
     }
 
     @Getter

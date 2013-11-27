@@ -28,6 +28,7 @@ package tk.manf.InventorySQL;
 import java.io.IOException;
 import net.gravitydevelopment.updater.Updater;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 import tk.manf.InventorySQL.manager.AddonManager;
@@ -36,9 +37,11 @@ import tk.manf.InventorySQL.manager.DataHandlingManager;
 import tk.manf.InventorySQL.manager.DatabaseManager;
 import tk.manf.InventorySQL.manager.DependenciesManager;
 import tk.manf.InventorySQL.manager.InventoryLockingSystem;
+import tk.manf.InventorySQL.manager.LanguageManager;
 import tk.manf.InventorySQL.manager.LoggingManager;
 import tk.manf.InventorySQL.manager.LoggingManager.DeveloperMessages;
 import tk.manf.InventorySQL.manager.UpdateEventManager;
+import tk.manf.InventorySQL.util.Language;
 
 public final class InventorySQLPlugin extends JavaPlugin {
     private CommandManager manager;
@@ -94,6 +97,11 @@ public final class InventorySQLPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        //Kick Players before restart
+        for (Player p : getServer().getOnlinePlayers()) {
+            p.kickPlayer(LanguageManager.getInstance().getMessage(Language.KICKED_RELOAD));
+            DatabaseManager.getInstance().savePlayer(p);
+        }
         manager.disable();
         AddonManager.getInstance().disable(this);
     }
