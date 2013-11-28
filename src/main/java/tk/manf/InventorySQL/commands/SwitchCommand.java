@@ -22,13 +22,13 @@
  * 
  * manf                   info@manf.tk
  */
-
 package tk.manf.InventorySQL.commands;
 
 import tk.manf.InventorySQL.AbstractCommandHandler;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import se.ranzdo.bukkit.methodcommand.Arg;
 import se.ranzdo.bukkit.methodcommand.Command;
@@ -37,31 +37,28 @@ import tk.manf.InventorySQL.manager.InventoryLockingSystem;
 
 public class SwitchCommand extends AbstractCommandHandler {
     private static final String IDENTIFIER = "switch";
-    
+
     @Command(identifier = IDENTIFIER,
-            description = "Switches your Server",
-            permissions = {"InventorySQL.switch.self"})
-    public void changeServerSelf(Player sender, @Arg(name = "server") String server) {
-        changeServerTarget(sender, server, sender);
-    }
-    
-    @Command(identifier = IDENTIFIER,
-            description = "Switches the Server for others",
-            permissions = {"InventorySQL.switch.other"})
-    public void changeServerTarget(Player sender, @Arg(name = "server") String server, @Arg(name = "target") Player target) {
-        InventoryLockingSystem.getInstance().addLock(target.getName());
-        DatabaseManager.getInstance().savePlayer(target);
-        ByteArrayOutputStream b = new ByteArrayOutputStream();
-        DataOutputStream out = new DataOutputStream(b);
-        
-        try {
-            out.writeUTF("Connect");
-            out.writeUTF(server);
-        } catch (IOException e) {
+            description = "Switches the Server of a given Player")
+    public void changeServerTarget(Player sender, @Arg(name = "server") String server, @Arg(name = "target", def = "?sender") Player target) {
+        String perm = sender.getName().equals(target.getName()) ? "InventorySQL.switch.self" : "InventorySQL.switch.other";
+        if (sender.hasPermission(perm)) {
+            InventoryLockingSystem.getInstance().addLock(target.getName());
+            DatabaseManager.getInstance().savePlayer(target);
+            ByteArrayOutputStream b = new ByteArrayOutputStream();
+            DataOutputStream out = new DataOutputStream(b);
+            try {
+                out.writeUTF("Connect");
+                out.writeUTF(server);
+            } catch (IOException e) {
+            }
+
+            target.sendPluginMessage(getPlugin(), "BungeeCord", b.toByteArray());
+            InventoryLockingSystem.getInstance().removeLock(target.getName());
+        } else {
+            // Remove asap
+            sender.sendMessage(ChatColor.RED + "You do not have permissions to do this!");
         }
-        
-        target.sendPluginMessage(getPlugin(), "BungeeCord", b.toByteArray());
-        InventoryLockingSystem.getInstance().removeLock(target.getName());
     }
-    
+
 }

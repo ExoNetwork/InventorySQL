@@ -34,7 +34,6 @@
             <id>ranzdo-repo</id>
             <url>http://ci.ranzdo.se/plugin/repository/everything/</url>
         </repository>
-
     </repositories>
 
     <dependencies>        
