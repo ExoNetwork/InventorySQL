@@ -37,7 +37,13 @@ import tk.manf.InventorySQL.manager.InventoryLockingSystem;
 
 public class SwitchCommand extends AbstractCommandHandler {
     private static final String IDENTIFIER = "switch";
-
+    private static final String CHANNEL = "BungeeCord";
+    
+    @Override
+    public void init() {
+        getPlugin().getServer().getMessenger().registerOutgoingPluginChannel(getPlugin(), CHANNEL);
+    }
+    
     @Command(identifier = IDENTIFIER,
             description = "Switches the Server of a given Player")
     public void changeServerTarget(Player sender, @Arg(name = "server") String server, @Arg(name = "target", def = "?sender") Player target) {
@@ -53,7 +59,7 @@ public class SwitchCommand extends AbstractCommandHandler {
             } catch (IOException e) {
             }
 
-            target.sendPluginMessage(getPlugin(), "BungeeCord", b.toByteArray());
+            target.sendPluginMessage(getPlugin(), CHANNEL, b.toByteArray());
             InventoryLockingSystem.getInstance().removeLock(target.getName());
         } else {
             // Remove asap

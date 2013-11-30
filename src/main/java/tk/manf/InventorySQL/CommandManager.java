@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import se.ranzdo.bukkit.methodcommand.CommandHandler;
 import tk.manf.InventorySQL.commands.InvSQLCommand;
+import tk.manf.InventorySQL.commands.SwitchCommand;
 
 public class CommandManager {
     private final List<AbstractCommandHandler> commands;
@@ -38,14 +39,15 @@ public class CommandManager {
     public CommandManager() {
         commands = new ArrayList<AbstractCommandHandler>(1);
         commands.add(new InvSQLCommand());
+        commands.add(new SwitchCommand());
     }
 
     public void initialise(InventorySQLPlugin plugin) {
         this.plugin = plugin;
         handler = new CommandHandler(plugin);
         for (AbstractCommandHandler command : commands) {
-            command.initialise(handler);
             command.setCommandManager(this);
+            command.initialise(handler);
         }
     }
     

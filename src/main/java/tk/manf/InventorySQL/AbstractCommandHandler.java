@@ -48,6 +48,10 @@ public abstract class AbstractCommandHandler {
     
     public final AbstractCommandHandler initialise(CommandHandler handler) {
         handler.registerCommands(this);
+        init();
         return this;
+    }
+    
+    public void init() {
     }
 }
