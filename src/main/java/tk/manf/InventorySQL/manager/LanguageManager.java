@@ -39,7 +39,11 @@ public class LanguageManager {
     }
 
     public void sendMessage(CommandSender player, Language lang, Object... args) {
-        player.sendMessage(getMessage(lang, args));
+        String msg = getMessage(lang, args);
+        if(msg == null || msg.equalsIgnoreCase("")) {
+            return;
+        }
+        player.sendMessage(msg);
     }
 
     public String getMessage(Language lang, Object... args) {
