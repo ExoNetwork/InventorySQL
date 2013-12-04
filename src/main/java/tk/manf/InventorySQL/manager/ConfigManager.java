@@ -50,6 +50,8 @@ public final class ConfigManager {
     @Getter
     private FileConfiguration language;
     @Getter
+    private int saveInterval; 
+    @Getter
     private boolean metricsEnabled, autoUpdateEnabled;
 
     private ConfigManager() {
@@ -89,6 +91,7 @@ public final class ConfigManager {
         databaseHandler = config.getString("database.handler", "tk.manf.InventorySQL.database.handler.MySQLDatabaseHandler");
         updateEvents = config.getStringList("update-events");
         metricsEnabled = config.getBoolean("enable-metrics");
+        saveInterval = config.getInt("save-interval") * 20;
         //add default value in case of user did an upgrade to 3.1 
         autoUpdateEnabled = config.getBoolean("auto-update", true);
         dbURL = config.getString("database.url");

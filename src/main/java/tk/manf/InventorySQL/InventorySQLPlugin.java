@@ -63,6 +63,18 @@ public final class InventorySQLPlugin extends JavaPlugin {
             manager = new CommandManager();
             manager.initialise(this);
             InventorySQLAPI.getAPI().init(this);
+            if (ConfigManager.getInstance().getSaveInterval() > 0) {
+                getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
+                    public void run() {
+                        LoggingManager.getInstance().log(LoggingManager.Level.DEBUG, "Saving Players...");
+                        for (Player player : getServer().getOnlinePlayers()) {
+                            LoggingManager.getInstance().log(LoggingManager.Level.DEBUG, "Saving " + player.getName());
+                            DatabaseManager.getInstance().savePlayer(player);
+                        }
+                    }
+
+                }, ConfigManager.getInstance().getSaveInterval(), ConfigManager.getInstance().getSaveInterval());
+            }
         } catch (Exception ex) {
             LoggingManager.getInstance().log(ex);
             getPluginLoader().disablePlugin(this);
