@@ -31,6 +31,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
+import tk.manf.InventorySQL.api.InventorySQLAPI;
 import tk.manf.InventorySQL.manager.AddonManager;
 import tk.manf.InventorySQL.manager.ConfigManager;
 import tk.manf.InventorySQL.manager.DataHandlingManager;
@@ -61,6 +62,7 @@ public final class InventorySQLPlugin extends JavaPlugin {
             InventoryLockingSystem.getInstance().initialise(this);
             manager = new CommandManager();
             manager.initialise(this);
+            InventorySQLAPI.getAPI().init(this);
         } catch (Exception ex) {
             LoggingManager.getInstance().log(ex);
             getPluginLoader().disablePlugin(this);
@@ -102,6 +104,7 @@ public final class InventorySQLPlugin extends JavaPlugin {
             p.kickPlayer(LanguageManager.getInstance().getMessage(Language.KICKED_RELOAD));
             DatabaseManager.getInstance().savePlayer(p);
         }
+        InventorySQLAPI.getAPI().disable(this);
         manager.disable();
         AddonManager.getInstance().disable(this);
     }
