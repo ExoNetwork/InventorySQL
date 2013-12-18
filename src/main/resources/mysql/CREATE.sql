@@ -1,7 +1,7 @@
 -- -----------------------------------------------------
 -- Player Table
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `player` (
+CREATE TABLE IF NOT EXISTS `[PLAYER_DB]` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `playername` VARCHAR(16) NULL ,
   PRIMARY KEY (`id`) )
@@ -11,7 +11,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Inventory Table
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `inventory` (
+CREATE TABLE IF NOT EXISTS `[INVENTORY_DB]` (
   `id` INT NOT NULL AUTO_INCREMENT ,
   `playerID` INT NOT NULL ,
   `content` BLOB NULL ,
@@ -31,7 +31,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Enderchest Table
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `enderchest` (
+CREATE TABLE IF NOT EXISTS `[ENDERCHEST_DB]` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `playerID` int(11) NOT NULL,
   `content` blob,

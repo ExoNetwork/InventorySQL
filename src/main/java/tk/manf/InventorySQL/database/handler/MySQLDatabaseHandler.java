@@ -61,15 +61,15 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
 
     @Override
     public void init(JavaPlugin plugin) throws SQLException, IOException {
+        q = new Queries(ConfigManager.getConfig(plugin, "dbhandler.yml"));
         Connection con = getConnection();
         @Cleanup
         Statement stmt = con.createStatement();
-        String[] queries = CharStreams.toString(new InputStreamReader(plugin.getResource("mysql/CREATE.sql"))).split(";");
+        String[] queries = q.replaceTables(CharStreams.toString(new InputStreamReader(plugin.getResource("mysql/CREATE.sql")))).split(";");
         for (String query : queries) {
             LoggingManager.getInstance().d(query);
             stmt.execute(query);
         }
-        q = new Queries(ConfigManager.getConfig(plugin, "dbhandler.yml"));
     }
 
     @Override
@@ -130,7 +130,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     /**
      * Returns the ID of the given Player
      *
-     * @param con Connection object
+     * @param con        Connection object
      * @param playername lowercased name of Player
      * <p/>
      * @return id
@@ -206,14 +206,15 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         private final String INSERT_PLAYER_QUERY;
         private final String INSERT_INVENTORY_QUERY;
         private final String INSERT_ENDERCHEST_QUERY;
-        //CONFIG VALUES
+        //AFFIXES
         private static final String CONFIG_TABLES_PREFIX = "tables.prefix";
         private static final String CONFIG_TABLES_SUFFIX = "tables.suffix";
+        //TABLES
         private static final String CONFIG_TABLES_PLAYER = "tables.player";
         private static final String CONFIG_TABLES_INVENTORY = "tables.inventory";
         private static final String CONFIG_TABLES_ENDERCHEST = "tables.enderchest";
-        
-        public Queries(FileConfiguration config) {
+
+        Queries(FileConfiguration config) {
             this.PREFIX = config.getString(CONFIG_TABLES_PREFIX);
             this.SUFFIX = config.getString(CONFIG_TABLES_SUFFIX);
             //TABLES
@@ -228,9 +229,15 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
             this.INSERT_INVENTORY_QUERY = "INSERT INTO " + INVENTORY_DATABASE + " (id, playerID, content, armor, server) VALUES (NULL, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE content=VALUES(content), armor=VALUES(armor)";
             this.INSERT_ENDERCHEST_QUERY = "INSERT INTO " + ENDERCHEST_DATABASE + " (id, playerID, content, server) VALUES (NULL, ?, ?, ?) ON DUPLICATE KEY UPDATE content=VALUES(content)";
         }
-        
+
         private String initialise(FileConfiguration config, final String NODE) {
             return PREFIX + config.getString(NODE) + SUFFIX;
         }
+
+        public String replaceTables(String query) {
+            //TODO: NASTY CODE CLEANUP?
+            return query.replace("[PLAYER_DB]", PLAYER_DATABASE).replace("[INVENTORY_DB]", INVENTORY_DATABASE).replace("[ENDERCHEST_DB]", ENDERCHEST_DATABASE);
+        }
+
     }
 }

@@ -36,10 +36,6 @@ import tk.manf.InventorySQL.datahandling.Serializer;
 import tk.manf.InventorySQL.datahandling.exceptions.SerializationException;
 import tk.manf.util.itemstack.ItemStackUtil;
 
-/**
- *
- * @author Björn
- */
 public class SimpleSerializer implements Serializer {
     public ItemStack[] deserializeItemStacks(byte[] b) throws SerializationException {
         try {
