@@ -35,10 +35,11 @@ import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 import tk.manf.InventorySQL.datahandling.Serializer;
 import tk.manf.InventorySQL.datahandling.exceptions.SerializationException;
+import tk.manf.InventorySQL.manager.LoggingManager;
 
 public class SimpleSerializer implements Serializer {
     private final ItemStack AIR = new ItemStack(Material.AIR);
-    
+
     public ItemStack[] deserializeItemStacks(byte[] b) throws SerializationException {
         try {
             return deserial(JSONValue.parseWithException(new String(b)));
@@ -50,7 +51,7 @@ public class SimpleSerializer implements Serializer {
     public byte[] serializeItemStacks(ItemStack[] inv) throws SerializationException {
         List<Map<String, Object>> inventory = new ArrayList<Map<String, Object>>(inv.length);
         for (ItemStack is : inv) {
-            inventory.add((is == null ? AIR: is).serialize());
+            inventory.add((is == null ? AIR : is).serialize());
         }
         return JSONValue.toJSONString(inventory).getBytes();
     }
@@ -65,8 +66,9 @@ public class SimpleSerializer implements Serializer {
                         final Map<?, ?> mdata = (Map) t;
                         final Map<String, Object> conv = new HashMap<String, Object>(mdata.size());
                         for (Map.Entry<?, ?> e : mdata.entrySet()) {
-                            conv.put(String.valueOf(e.getKey()), e.getValue());
+                            conv.put(String.valueOf(e.getKey()), convert(e.getValue()));
                         }
+                        LoggingManager.getInstance().log(LoggingManager.Level.DEBUG, "Serializing Data: " + conv.entrySet().toString());
                         items.add(ItemStack.deserialize(conv));
                     } else {
                         throw new IllegalArgumentException("Not a Map");
@@ -79,4 +81,15 @@ public class SimpleSerializer implements Serializer {
             throw new SerializationException(o, ex);
         }
     }
+
+    private Object convert(Object o) {
+        if (o instanceof Number) {
+            Long v = (Long) o;
+            if (Integer.MAX_VALUE > v.longValue()) {
+                return v.intValue();
+            }
+        }
+        return o;
+    }
+
 }
