@@ -58,7 +58,11 @@ public final class InventorySQLPlugin extends JavaPlugin {
             DependenciesManager.getInstance().initialise(this, getClassLoader());
             DatabaseManager.getInstance().initialise(this);
             UpdateEventManager.getInstance().initialise(this);
-            DataHandlingManager.getInstance().initialise(getClassLoader());
+            if(DataHandlingManager.getInstance().initialise(getClassLoader())) {
+                LoggingManager.getInstance().logDeveloperMessage("manf", DeveloperMessages.HANDLING_BROKEN);
+                getPluginLoader().disablePlugin(this);
+                return;
+            }
             InventoryLockingSystem.getInstance().initialise(this);
             manager = new CommandManager();
             manager.initialise(this);

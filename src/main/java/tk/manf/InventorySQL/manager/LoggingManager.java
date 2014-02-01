@@ -105,7 +105,8 @@ public class LoggingManager {
         //Just remind people to be supportive.
         METRICS_OFF("You turned metrics off :(. Metrics is a good way to support Developers! ( You should also consider donating :) )"),
         METRICS_LOADED("Thanks for supporting us and using Metrics :)"),
-        DEPRECATED_CLASS("Sorry, but the loaded class is deprecated");
+        DEPRECATED_CLASS("Sorry, but the loaded class is deprecated"),
+        HANDLING_BROKEN("You did not specify proper a proper Handler. Please specify a correct Classname for the missing Handler");
         @Getter
         private String message;
     }

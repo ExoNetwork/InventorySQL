@@ -5,7 +5,7 @@ database:
   url: 'jdbc:mysql://localhost:3306/mydb?user=root&password=asdf'
   handler: 'tk.manf.InventorySQL.database.handler.MySQLDatabaseHandler'
 data:
-  serializer: 'tk.manf.InventorySQL.datahandling.serializer.JSONSerializer'
+  serializer: 'tk.manf.InventorySQL.datahandling.serializer.SimpleSerializer'
   compressor: 'tk.manf.InventorySQL.datahandling.compressor.GZipCompressor'
 enable-metrics: true
 save-interval: 60

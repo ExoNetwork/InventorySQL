@@ -39,15 +39,21 @@ public class DataHandlingManager {
     private DataHandlingManager() {
     }
 
-    public void initialise(ClassLoader cl) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        compressor = ReflectionUtil.getInstance(Compressor.class, cl, ConfigManager.getInstance().getCompressor());
-        serializer = ReflectionUtil.getInstance(Serializer.class, cl, ConfigManager.getInstance().getSerializer());
+    public boolean initialise(ClassLoader cl) throws InstantiationException, IllegalAccessException {
+        try {
+            compressor = ReflectionUtil.getInstance(Compressor.class, cl, ConfigManager.getInstance().getCompressor());
+            serializer = ReflectionUtil.getInstance(Serializer.class, cl, ConfigManager.getInstance().getSerializer());
+            return true;
+        } catch (ClassNotFoundException ex) {
+            LoggingManager.getInstance().log(LoggingManager.Level.ERROR, "Error loading Handlers: " + ex.getMessage());
+            return false;
+        }
     }
-    
+
     public void reload(ClassLoader cl) {
         
     }
-    
+
     public ItemStack[] deserial(byte[] b) throws DataHandlingException {
         return serializer.deserializeItemStacks(compressor.uncompress(b));
     }
