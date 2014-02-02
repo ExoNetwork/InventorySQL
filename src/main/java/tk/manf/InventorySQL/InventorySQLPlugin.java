@@ -45,6 +45,7 @@ import tk.manf.InventorySQL.manager.UpdateEventManager;
 import tk.manf.InventorySQL.util.Language;
 
 public final class InventorySQLPlugin extends JavaPlugin {
+    private static final int CURSE_ID = 35989; 
     private CommandManager manager;
 
     @Override
@@ -85,7 +86,7 @@ public final class InventorySQLPlugin extends JavaPlugin {
 
         //May add just a check and let the user update manually?
         if (ConfigManager.getInstance().isAutoUpdateEnabled()) {
-            Updater updater = new Updater(this, 38723, this.getFile(), Updater.UpdateType.DEFAULT, false);
+            Updater updater = new Updater(this, CURSE_ID, this.getFile(), Updater.UpdateType.DEFAULT, false);
             switch (updater.getResult()) {
                 case SUCCESS:
                     LoggingManager.getInstance().log(999, "Updated to Version: " + updater.getLatestFileLink());

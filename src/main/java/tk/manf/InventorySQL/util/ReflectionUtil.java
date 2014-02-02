@@ -25,6 +25,7 @@
 
 package tk.manf.InventorySQL.util;
 
+import com.google.common.base.Preconditions;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import tk.manf.InventorySQL.manager.LoggingManager;
@@ -33,6 +34,7 @@ import tk.manf.InventorySQL.manager.LoggingManager;
 public class ReflectionUtil {
     public static <T> T getInstance(Class<T> type, ClassLoader loader, String target) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
         Class<?> t = loader.loadClass(target);
+        Preconditions.checkArgument(t != null, "Target not found %s", target);
         LoggingManager.getInstance().d("Loading " + t.getName());
         if(t.getAnnotation(Deprecated.class) != null) {
             LoggingManager.getInstance().logDeveloperMessage("manf", LoggingManager.DeveloperMessages.DEPRECATED_CLASS);
