@@ -40,7 +40,7 @@ public class TeleportSignsAddon extends AbstractAddon implements Listener {
     }
 
     @EventHandler
-    public void onPreSave(final ProxyTeleportEvent ev) {
+    public void onTeleport(final ProxyTeleportEvent ev) {
         InventorySQLAPI.getAPI().switchPlayer(ev.getPlayer(), ev.getServerInfo().getName());
         ev.setCancelled(true);
     }
