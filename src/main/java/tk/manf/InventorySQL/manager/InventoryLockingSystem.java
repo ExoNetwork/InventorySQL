@@ -39,6 +39,7 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class InventoryLockingSystem implements Listener {
@@ -65,16 +66,20 @@ public class InventoryLockingSystem implements Listener {
     public void onPlayerDrop(final PlayerDropItemEvent ev) {
         check(ev);
     }
-
+    
     @EventHandler
     public void onInventoryClick(final InventoryClickEvent ev) {
         check(ev, ev.getWhoClicked());
     }
     
-    
     @EventHandler
     public void onInventoryOpen(final InventoryOpenEvent ev) {
         check(ev, ev.getPlayer());
+    }
+    
+    @EventHandler
+    public void onPlayerLeave(final PlayerQuitEvent ev) {
+        removeLock(ev.getPlayer().getName());
     }
     
     public boolean isLocked(String player) {

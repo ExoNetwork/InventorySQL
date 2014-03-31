@@ -79,7 +79,6 @@ public class InventorySQLAPI {
         } catch (IOException e) {
         }
         sendPluginMessage(target, b.toByteArray());
-        InventoryLockingSystem.getInstance().removeLock(target.getName());
     }
 
     private void sendPluginMessage(Player player, byte[] message) {
