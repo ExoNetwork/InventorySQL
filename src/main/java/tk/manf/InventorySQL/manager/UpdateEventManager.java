@@ -110,7 +110,10 @@ final class UpdateEvent {
             public void execute(Listener listener, Event event) throws EventException {
                 try {
                     if (listener instanceof UpdateEventManager) {
-                        m.invoke(listener, event);
+                        // Prevent illegal Argument Exception
+                        if(m.getParameterTypes()[0] == event.getClass()) {
+                             m.invoke(listener, event);
+                        }
                     }
                 } catch (Exception e) {
                     LoggingManager.getInstance().log(LoggingManager.Level.ERROR, "Error with Event: " + String.valueOf(listener) + " - EV: " + event == null ? "failed" : event.getEventName());
