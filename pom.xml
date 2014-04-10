@@ -23,20 +23,9 @@
             <url>http://repo.mcstats.org/content/repositories/public</url>
         </repository>
         <repository>
-            <id>vault-repo</id>
-            <url>http://ci.herocraftonline.com/plugin/repository/everything</url>
-        </repository>
-        <repository>
             <id>bukkit-repo</id>
             <url>http://repo.bukkit.org/content/groups/public</url>
         </repository>
-        
-        <!-- NOT AVAIABLE
-        <repository>
-            <id>ranzdo-repo</id>
-            <url>http://ci.ranzdo.se/plugin/repository/everything/</url>
-        </repository>
-        -->
     </repositories>
 
     <dependencies>        
@@ -50,12 +39,6 @@
             <artifactId>lombok</artifactId>
             <version>1.12.6</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>se.ranzdo.bukkit</groupId>
-            <artifactId>methodcommand</artifactId>
-            <version>0.1</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.mcstats.bukkit</groupId>
@@ -104,7 +87,6 @@
                             <artifactSet>
                                 <includes>
                                     <include>org.mcstats.*:*</include>
-                                    <include>se.ranzdo.bukkit:methodcommand</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

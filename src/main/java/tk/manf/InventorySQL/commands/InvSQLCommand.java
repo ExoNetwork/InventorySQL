@@ -25,43 +25,44 @@
 
 package tk.manf.InventorySQL.commands;
 
-import org.bukkit.ChatColor;
-import tk.manf.InventorySQL.AbstractCommandHandler;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import se.ranzdo.bukkit.methodcommand.Arg;
-import se.ranzdo.bukkit.methodcommand.Command;
+import tk.manf.InventorySQL.CommandManager;
 import tk.manf.InventorySQL.manager.ConfigManager;
 import tk.manf.InventorySQL.manager.DatabaseManager;
 import tk.manf.InventorySQL.manager.LanguageManager;
 import tk.manf.InventorySQL.manager.LoggingManager;
 import tk.manf.InventorySQL.util.Language;
 
-public class InvSQLCommand extends AbstractCommandHandler {
-    private static final String IDENTIFIER = "invsql";
-    private static final String SAVE = IDENTIFIER + " " + "save";
-    private static final String RELOAD = IDENTIFIER + " " + "reload";
+public final class InvSQLCommand extends CommandManager.InternalCommand {
+    public InvSQLCommand() {
+        super("invsql");
+    }
 
-    @Command(identifier = SAVE,
-             description = "Saves specific player",
-             onlyPlayers = true)
-    public void savePlayer(CommandSender sender, @Arg(name = "target", def = "?sender") Player target) {
-        String perm = sender.getName().equals(target.getName()) ? "InventorySQL.save.self" : "InventorySQL.save.other";
-        //Workaround for errors
-        if (sender.hasPermission(perm)) {
-            DatabaseManager.getInstance().savePlayer(target);
-            sender.sendMessage("Player " + target.getName() + " has been saved!");
-        } else {
-            // Remove asap
-            sender.sendMessage(ChatColor.RED + "You do not have permissions to do this!");
+    @Override
+    public void onCommand(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            //TODO:
+            return;
+        }
+        if (args[0].equalsIgnoreCase("save")) {
+            savePlayer(sender, getOptionalPlayer(sender, args, 1));
+            return;
+        }
+        if (args[0].equalsIgnoreCase("reload")) {
+            reload(sender, args.length == 1 ? "" : args[1]);
         }
     }
 
-    @Command(identifier = InvSQLCommand.RELOAD,
-             description = "Reloads the Language or the Config",
-             onlyPlayers = false,
-             permissions = {"InventorySQL.reload"})
-    public void reload(CommandSender sender, @Arg(name = "Language|Config") String target) {
+    private void savePlayer(CommandSender sender, Player target) {
+        checkNotNull(target, "Player not found");
+        checkPermission(sender, sender.getName().equals(target.getName()) ? "InventorySQL.save.self" : "InventorySQL.save.other");
+        DatabaseManager.getInstance().savePlayer(target);
+        sender.sendMessage("Player " + target.getName() + " has been saved!");
+    }
+
+    private void reload(CommandSender sender, String target) {
+        checkPermission(sender, "InventorySQL.reload");
         try {
             if (target.equalsIgnoreCase("LANGUAGE")) {
                 ConfigManager.getInstance().reloadConfig(getPlugin(), getClassLoader());
@@ -70,11 +71,11 @@ public class InvSQLCommand extends AbstractCommandHandler {
             } else {
                 sender.sendMessage("You can only reload Language or Config");
             }
+            //TODO: remove much exceptions less wow
         } catch (Exception ex) {
             LoggingManager.getInstance().log(ex);
             LanguageManager.getInstance().sendMessage(sender, Language.COMMAND_ERROR);
         }
 
     }
-
 }

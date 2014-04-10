@@ -66,7 +66,7 @@ public final class InventorySQLPlugin extends JavaPlugin {
             }
             InventoryLockingSystem.getInstance().initialise(this);
             manager = new CommandManager();
-            manager.initialise(this);
+            manager.initialise(this, getClassLoader());
             InventorySQLAPI.getAPI().init(this);
             if (ConfigManager.getInstance().getSaveInterval() > 0) {
                 getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable() {
@@ -121,11 +121,6 @@ public final class InventorySQLPlugin extends JavaPlugin {
             DatabaseManager.getInstance().savePlayer(p);
         }
         InventorySQLAPI.getAPI().disable(this);
-        manager.disable();
         AddonManager.getInstance().disable(this);
-    }
-
-    ClassLoader getReflectionLoader() {
-        return getClassLoader();
     }
 }
