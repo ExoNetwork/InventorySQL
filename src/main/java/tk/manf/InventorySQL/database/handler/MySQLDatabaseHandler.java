@@ -67,6 +67,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         Statement stmt = con.createStatement();
         String[] queries = q.replaceTables(CharStreams.toString(new InputStreamReader(plugin.getResource("mysql/CREATE.sql")))).split(";");
         for (String query : queries) {
+            if(query == null) {continue;}
             LoggingManager.getInstance().d(query);
             stmt.execute(query);
         }
