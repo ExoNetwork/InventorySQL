@@ -40,6 +40,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
+import tk.manf.InventorySQL.commands.InvSQLCommand;
+import tk.manf.InventorySQL.commands.SwitchCommand;
 import tk.manf.InventorySQL.manager.LoggingManager;
 
 public class CommandManager implements CommandExecutor {
@@ -49,8 +51,8 @@ public class CommandManager implements CommandExecutor {
     
     public CommandManager() {
         ImmutableMap.Builder<String, InternalCommand> b = new ImmutableMap.Builder<String, InternalCommand>();
-        put(b, null);
-        put(b, null);
+        put(b, new InvSQLCommand());
+        put(b, new SwitchCommand());
         this.commands = b.build();
     }
 

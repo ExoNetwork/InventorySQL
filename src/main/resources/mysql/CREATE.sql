@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `[ENDERCHEST_DB]` (
 -- -----------------------------------------------------
 
 -- -----------------------------------------------------
--- Add stats to Playerdatabase: max, min-HP; food
+-- Add stats to Playerdatabase: max, min-HP, food
 -- -----------------------------------------------------
 
 -- ALTER TABLE `[INVENTORY_DB]` ADD `min_health` DOUBLE NOT NULL DEFAULT 20;

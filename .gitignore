@@ -1,2 +1,25 @@
+*.class
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# Intellij
+.idea/
+*.iml
+*.iws
+
+# Maven
+target/
+
+# Java
+docs/
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.bat
+
 /nbactions.xml
-/target/
