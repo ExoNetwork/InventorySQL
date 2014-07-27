@@ -26,8 +26,6 @@
 package tk.manf.InventorySQL.manager;
 
 import com.google.common.collect.ImmutableList;
-import java.lang.reflect.Method;
-import java.util.List;
 import lombok.Getter;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -35,6 +33,9 @@ import org.bukkit.event.server.PluginEnableEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.lang.reflect.Method;
+import java.util.List;
 
 public final class DependenciesManager implements Listener {
     private JavaPlugin plugin;

@@ -25,13 +25,10 @@
 
 package tk.manf.InventorySQL.manager;
 
-import java.util.logging.Logger;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.bukkit.Bukkit;
+
+import java.util.logging.Logger;
 
 public class LoggingManager {
     private static final Logger logger = Bukkit.getLogger();

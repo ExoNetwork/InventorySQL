@@ -3,7 +3,7 @@
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `[PLAYER_DB]` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `playername` VARCHAR(16) NULL ,
+  `playeruuid` VARCHAR(36) NULL ,
   PRIMARY KEY (`id`) )
 ENGINE = InnoDB;
 

@@ -26,12 +26,13 @@
 package tk.manf.InventorySQL.manager;
 
 import com.google.common.collect.ImmutableSet;
-import java.io.IOException;
 import lombok.Getter;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.manf.InventorySQL.addons.Addon;
 import tk.manf.InventorySQL.util.ReflectionUtil;
+
+import java.io.IOException;
 
 public class AddonManager {    
     private ImmutableSet<Addon> addons;

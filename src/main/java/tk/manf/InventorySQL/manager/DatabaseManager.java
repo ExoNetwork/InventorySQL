@@ -25,7 +25,6 @@
 
 package tk.manf.InventorySQL.manager;
 
-import java.util.HashMap;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,12 +35,15 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.manf.InventorySQL.database.DatabaseHandler;
+import tk.manf.InventorySQL.database.handler.MySQLDatabaseHandler;
 import tk.manf.InventorySQL.event.PlayerLoadedEvent;
 import tk.manf.InventorySQL.event.PlayerSavedEvent;
 import tk.manf.InventorySQL.event.PrePlayerLoadedEvent;
 import tk.manf.InventorySQL.event.PrePlayerSavedEvent;
 import tk.manf.InventorySQL.util.Language;
 import tk.manf.InventorySQL.util.ReflectionUtil;
+
+import java.util.HashMap;
 
 public final class DatabaseManager implements Listener {
     private DatabaseHandler handler;
@@ -67,7 +69,7 @@ public final class DatabaseManager implements Listener {
     public void savePlayer(Player player) {
         //Allow Plugins to cancel saving
         if (EventManager.getInstance().call(new PrePlayerSavedEvent(player)).isCancelled()) {
-            LoggingManager.getInstance().log(LoggingManager.Level.DEBUG, "Canceled Saving for: " + player.getName());
+            LoggingManager.getInstance().log(LoggingManager.Level.DEBUG, "Canceled Saving for: " + player.getUniqueId());
             return;
         }
 
@@ -93,23 +95,23 @@ public final class DatabaseManager implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onPlayerLogin(final PlayerJoinEvent ev) {
         Player p = ev.getPlayer();
-        addPlayerInventoryCache(p.getName(), p.getInventory());
+        addPlayerInventoryCache(String.valueOf(p.getUniqueId()), p.getInventory());
         p.getInventory().clear();
         try {
             if (loadPlayer(p)) {
                 //Save
                 LanguageManager.getInstance().sendMessage(p, Language.SYNCED_INVENTORY);
-                removePlayerInventoryCache(false, p.getName(), p.getInventory());
+                removePlayerInventoryCache(false, String.valueOf(p.getUniqueId()), p.getInventory());
             } else {
                 //First Join
                 LanguageManager.getInstance().sendMessage(p, Language.FIRST_JOIN);
                 //Create data
-                removePlayerInventoryCache(true, p.getName(), p.getInventory());
+                removePlayerInventoryCache(true, String.valueOf(p.getUniqueId()), p.getInventory());
                 savePlayer(p);
             }
         } catch (Exception ex) {
             //Restore player Equipment, because we may accidently have removed it
-            removePlayerInventoryCache(true, p.getName(), p.getInventory());
+            removePlayerInventoryCache(true, String.valueOf(p.getUniqueId()), p.getInventory());
             LoggingManager.getInstance().log(LoggingManager.Level.ERROR, "Your Problem was caused by: " + handler);
             LoggingManager.getInstance().log(ex);
         }

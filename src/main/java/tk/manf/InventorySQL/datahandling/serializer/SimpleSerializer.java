@@ -25,10 +25,6 @@
 
 package tk.manf.InventorySQL.datahandling.serializer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.json.simple.JSONValue;
@@ -36,6 +32,11 @@ import org.json.simple.parser.ParseException;
 import tk.manf.InventorySQL.datahandling.Serializer;
 import tk.manf.InventorySQL.datahandling.exceptions.SerializationException;
 import tk.manf.InventorySQL.manager.LoggingManager;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class SimpleSerializer implements Serializer {
     private final ItemStack AIR = new ItemStack(Material.AIR);

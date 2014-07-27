@@ -25,8 +25,6 @@
 
 package tk.manf.InventorySQL.manager;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,15 +35,13 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerBedEnterEvent;
-import org.bukkit.event.player.PlayerBedLeaveEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+
+import java.lang.reflect.Method;
+import java.util.HashMap;
 
 public final class UpdateEventManager implements Listener {
     private final HashMap<String, UpdateEvent> events;
@@ -93,7 +89,7 @@ public final class UpdateEventManager implements Listener {
     }
 
     private void doGenericEvent(Event event, Player player) {
-        LoggingManager.getInstance().d("on" + event.getEventName() + "(" + player.getName().toString() + ")");
+        LoggingManager.getInstance().d("on" + event.getEventName() + "(" + player.getUniqueId() + ")");
         DatabaseManager.getInstance().savePlayer(player);
     }
     @Getter

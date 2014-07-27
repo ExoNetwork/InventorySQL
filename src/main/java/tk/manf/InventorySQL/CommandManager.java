@@ -27,8 +27,6 @@ package tk.manf.InventorySQL;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import java.lang.ref.WeakReference;
-import java.util.Map;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
@@ -43,6 +41,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tk.manf.InventorySQL.commands.InvSQLCommand;
 import tk.manf.InventorySQL.commands.SwitchCommand;
 import tk.manf.InventorySQL.manager.LoggingManager;
+
+import java.lang.ref.WeakReference;
+import java.util.Map;
 
 public class CommandManager implements CommandExecutor {
     private Map<String, InternalCommand> commands;
