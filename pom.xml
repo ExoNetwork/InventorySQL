@@ -110,6 +110,7 @@
                     <excludes>
                         <!-- This is just included, but not my source! Credits to the Author-->
                         <exclude>**/net/gravitydevelopment/updater/Updater.java</exclude>
+                        <exclude>**/com/evilmidget38/UUIDFetcher.java</exclude>
                     </excludes>
                 </configuration>
                 <executions>
