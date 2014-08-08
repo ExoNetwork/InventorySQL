@@ -58,7 +58,7 @@ public final class InvSQLCommand extends CommandManager.InternalCommand {
         checkNotNull(target, "Player not found");
         checkPermission(sender, sender.getName().equals(target.getName()) ? "InventorySQL.save.self" : "InventorySQL.save.other");
         DatabaseManager.getInstance().savePlayer(target);
-        sender.sendMessage("Player " + target.getName() + " has been saved!");
+        sender.sendMessage("Player " + target.getName() + "(" + target.getUniqueId() + ")" + " has been saved!");
     }
 
     private void reload(CommandSender sender, String target) {

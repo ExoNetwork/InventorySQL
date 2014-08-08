@@ -58,7 +58,7 @@ public class ExclusivePlayerSaveAddon extends AbstractAddon implements Listener 
 
     private void handle(final PrePlayerEvent ev) {
         if (!ev.getPlayer().hasPermission(AUTHORISATION)) {
-            log("Player is not Authorised: " + ev.getPlayer().getName());
+            log("Player is not Authorised: " + ev.getPlayer().getUniqueId());
             ev.setCancelled(true);
         }
     }

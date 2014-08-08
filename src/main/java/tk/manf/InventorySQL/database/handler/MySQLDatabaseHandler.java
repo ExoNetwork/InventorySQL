@@ -25,18 +25,10 @@
 package tk.manf.InventorySQL.database.handler;
 
 import com.google.common.io.CharStreams;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import lombok.Cleanup;
-
 import lombok.SneakyThrows;
 import lombok.ToString;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -48,6 +40,11 @@ import tk.manf.InventorySQL.datahandling.exceptions.DataHandlingException;
 import tk.manf.InventorySQL.manager.ConfigManager;
 import tk.manf.InventorySQL.manager.DataHandlingManager;
 import tk.manf.InventorySQL.manager.LoggingManager;
+import tk.manf.InventorySQL.tasks.NameConversionTask;
+
+import java.io.InputStreamReader;
+import java.sql.*;
+import java.util.ArrayList;
 
 @ToString(doNotUseGetters = true)
 public class MySQLDatabaseHandler implements DatabaseHandler {
@@ -60,24 +57,52 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     }
 
     @Override
-    public void init(JavaPlugin plugin) throws SQLException, IOException {
+    public void init(JavaPlugin plugin) throws Exception {
         q = new Queries(ConfigManager.getConfig(plugin, "dbhandler.yml"));
         Connection con = getConnection();
         @Cleanup
         Statement stmt = con.createStatement();
         String[] queries = q.replaceTables(CharStreams.toString(new InputStreamReader(plugin.getResource("mysql/CREATE.sql")))).split(";");
         for (String query : queries) {
-            if(query == null) {continue;}
+            if(query.trim().equalsIgnoreCase("")) {continue;}
             LoggingManager.getInstance().d(query);
             stmt.execute(query);
         }
+
+        convertNames(plugin);
+    }
+
+    private void convertNames(JavaPlugin plugin) throws Exception {
+        final Connection con = getConnection();
+
+        PreparedStatement stmt = con.prepareStatement(q.CHECK_FOR_OLD_STRUCTURE_QUERY);
+        ResultSet rs = stmt.executeQuery();
+        if(!rs.next()) {return;}
+        stmt.close();
+
+        PreparedStatement aStmt = con.prepareStatement(q.ALTER_TABLE_ADD_QUERY);
+        aStmt.execute();
+        aStmt.close();
+
+
+        ArrayList<String> namesToConvert = new ArrayList<String>();
+        PreparedStatement sStmt = con.prepareStatement(q.GET_PLAYER_NAMES_QUERY);
+        ResultSet sRs = sStmt.executeQuery();
+
+        while(sRs.next()) {
+            namesToConvert.add(sRs.getString("playername"));
+        }
+
+        sStmt.close();
+
+        new NameConversionTask(namesToConvert, con, q.PLAYER_DATABASE).runTaskAsynchronously(plugin);
     }
 
     @Override
     public void savePlayerInventory(Player player) throws Exception {
         final PlayerInventory inv = player.getInventory();
         final Connection con = getConnection();
-        final int playerID = getPlayerID(player.getName(), con);
+        final int playerID = getPlayerID(String.valueOf(player.getUniqueId()), con);
         final String serverID = ConfigManager.getInstance().getServerID(player);
 
         //Normal Inventory
@@ -95,7 +120,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
     public boolean loadPlayerInventory(Player player) throws Exception {
         LoggingManager.getInstance().d("Getting Player Inventory");
         final Connection con = getConnection();
-        final int playerID = getPlayerID(player.getName(), con);
+        final int playerID = getPlayerID(String.valueOf(player.getUniqueId()), con);
         final String serverID = ConfigManager.getInstance().getServerID(player);
         @Cleanup
         PreparedStatement invStmt = prepare(con, q.GET_PLAYER_INVENTORY_DATA_QUERY, playerID, serverID);
@@ -121,16 +146,16 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
      * Returns the ID of the given Player
      *
      * @param con        Connection object
-     * @param playername lowercased name of Player
+     * @param playerUUID the string value of the UUID of the player
      * <p/>
      * @return id
      * <p/>
      * @throws SQLException
      */
-    private int getPlayerID(String playername, Connection con) throws SQLException {
+    private int getPlayerID(String playerUUID, Connection con) throws SQLException {
         int id;
         PreparedStatement stmt = con.prepareStatement(q.GET_PLAYER_ID_QUERY);
-        stmt.setString(1, playername);
+        stmt.setString(1, playerUUID);
         LoggingManager.getInstance().d(stmt.toString());
         ResultSet rs = stmt.executeQuery();
         if (rs.next()) {
@@ -138,7 +163,7 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         } else {
             stmt.close();
             stmt = con.prepareStatement(q.INSERT_PLAYER_QUERY, Statement.RETURN_GENERATED_KEYS);
-            stmt.setString(1, playername);
+            stmt.setString(1, playerUUID);
             LoggingManager.getInstance().d(stmt.toString());
             stmt.executeUpdate();
             rs = stmt.getGeneratedKeys();
@@ -199,6 +224,10 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
         private final String INSERT_PLAYER_QUERY;
         private final String INSERT_INVENTORY_QUERY;
         private final String INSERT_ENDERCHEST_QUERY;
+        // Conversion QUERIES
+        private final String CHECK_FOR_OLD_STRUCTURE_QUERY;
+        private final String ALTER_TABLE_ADD_QUERY;
+        private final String GET_PLAYER_NAMES_QUERY;
         //AFFIXES
         private static final String CONFIG_TABLES_PREFIX = "tables.prefix";
         private static final String CONFIG_TABLES_SUFFIX = "tables.suffix";
@@ -215,12 +244,15 @@ public class MySQLDatabaseHandler implements DatabaseHandler {
             this.INVENTORY_DATABASE = initialise(config, CONFIG_TABLES_INVENTORY);
             this.ENDERCHEST_DATABASE = initialise(config, CONFIG_TABLES_ENDERCHEST);
             //QUERIES
-            this.GET_PLAYER_ID_QUERY = "SELECT id FROM " + PLAYER_DATABASE + " WHERE playername=? LIMIT 1";
+            this.GET_PLAYER_ID_QUERY = "SELECT id FROM " + PLAYER_DATABASE + " WHERE playeruuid=? LIMIT 1";
             this.GET_PLAYER_INVENTORY_DATA_QUERY = "SELECT content, armor, min_health, max_health, food FROM " + INVENTORY_DATABASE + " WHERE playerID=? AND server=? LIMIT 1";
             this.GET_PLAYER_ENDERCHEST_DATA_QUERY = "SELECT content FROM " + ENDERCHEST_DATABASE + " WHERE playerID=? AND server=? LIMIT 1";
-            this.INSERT_PLAYER_QUERY = "INSERT INTO " + PLAYER_DATABASE + " (id, playername) VALUES (NULL, ?)";
+            this.INSERT_PLAYER_QUERY = "INSERT INTO " + PLAYER_DATABASE + " (id, playeruuid) VALUES (NULL, ?)";
             this.INSERT_INVENTORY_QUERY = "INSERT INTO " + INVENTORY_DATABASE + " (id, playerID, server, content, armor, min_health, max_health, food) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE content=VALUES(content), armor=VALUES(armor)";
             this.INSERT_ENDERCHEST_QUERY = "INSERT INTO " + ENDERCHEST_DATABASE + " (id, playerID, server, content) VALUES (NULL, ?, ?, ?) ON DUPLICATE KEY UPDATE content=VALUES(content)";
+            this.CHECK_FOR_OLD_STRUCTURE_QUERY = "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + PLAYER_DATABASE + "' AND COLUMN_NAME = 'playername'";
+            this.ALTER_TABLE_ADD_QUERY = "ALTER TABLE " + PLAYER_DATABASE + " ADD `playeruuid` VARCHAR(36) NULL";
+            this.GET_PLAYER_NAMES_QUERY = "SELECT playername FROM " + PLAYER_DATABASE;
         }
 
         private String initialise(FileConfiguration config, final String NODE) {

@@ -25,11 +25,12 @@
 
 package tk.manf.InventorySQL.manager;
 
-import java.text.MessageFormat;
-import java.util.HashMap;
 import lombok.Getter;
 import org.bukkit.command.CommandSender;
 import tk.manf.InventorySQL.util.Language;
+
+import java.text.MessageFormat;
+import java.util.HashMap;
 
 public class LanguageManager {
     private HashMap<String, MessageFormat> cache;

@@ -25,11 +25,12 @@
 
 package tk.manf.InventorySQL.util;
 
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import org.bukkit.ChatColor;
 import tk.manf.InventorySQL.manager.ConfigManager;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public final class Language {
     @Getter

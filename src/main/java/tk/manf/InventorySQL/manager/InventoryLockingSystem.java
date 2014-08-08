@@ -25,10 +25,6 @@
 
 package tk.manf.InventorySQL.manager;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 import lombok.Getter;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.Cancellable;
@@ -41,6 +37,11 @@ import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 
 public class InventoryLockingSystem implements Listener {
     private final List<String> locked;
@@ -79,7 +80,7 @@ public class InventoryLockingSystem implements Listener {
     
     @EventHandler
     public void onPlayerLeave(final PlayerQuitEvent ev) {
-        removeLock(ev.getPlayer().getName());
+        removeLock(String.valueOf(ev.getPlayer().getUniqueId()));
     }
     
     public boolean isLocked(String player) {
@@ -103,7 +104,7 @@ public class InventoryLockingSystem implements Listener {
     }
     
     private void check(Cancellable ev, HumanEntity player) {
-        ev.setCancelled(isLocked(player.getName()));
+        ev.setCancelled(isLocked(String.valueOf(player.getUniqueId())));
     }
 
     @Getter

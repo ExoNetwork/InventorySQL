@@ -25,15 +25,16 @@
 
 package tk.manf.InventorySQL.api;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import tk.manf.InventorySQL.manager.DatabaseManager;
 import tk.manf.InventorySQL.manager.InventoryLockingSystem;
+
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 
 @NoArgsConstructor
 public class InventorySQLAPI {

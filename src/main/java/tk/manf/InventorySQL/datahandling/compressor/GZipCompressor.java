@@ -25,16 +25,17 @@
 
 package tk.manf.InventorySQL.datahandling.compressor;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.GZIPOutputStream;
 import lombok.AccessLevel;
 import lombok.Cleanup;
 import lombok.NoArgsConstructor;
 import tk.manf.InventorySQL.datahandling.Compressor;
 import tk.manf.InventorySQL.datahandling.exceptions.CompressionException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class GZipCompressor implements Compressor {

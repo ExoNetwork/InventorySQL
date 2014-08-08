@@ -25,15 +25,16 @@
 
 package tk.manf.InventorySQL.datahandling.serializer;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import lombok.Cleanup;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 import tk.manf.InventorySQL.datahandling.Serializer;
 import tk.manf.InventorySQL.datahandling.exceptions.SerializationException;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 public class BukkitSerializer implements Serializer {
     public byte[] serializeItemStacks(ItemStack[] inv) throws SerializationException {
